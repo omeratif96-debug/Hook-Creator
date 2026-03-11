@@ -33,7 +33,7 @@ export function HookCard({ index, text }: HookCardProps) {
       </div>
       
       <p className="text-foreground font-medium text-lg leading-relaxed pt-2">
-        "{text}"
+        {text}
       </p>
 
       <div className="mt-6 flex justify-end">
