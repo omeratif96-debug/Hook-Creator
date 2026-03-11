@@ -8,3 +8,33 @@
 export interface HealthStatus {
   status: string;
 }
+
+/**
+ * The target platform
+ */
+export type GenerateHooksRequestPlatform =
+  (typeof GenerateHooksRequestPlatform)[keyof typeof GenerateHooksRequestPlatform];
+
+export const GenerateHooksRequestPlatform = {
+  YouTube: "YouTube",
+  TikTok: "TikTok",
+  Instagram: "Instagram",
+} as const;
+
+export interface GenerateHooksRequest {
+  /** The video topic or idea */
+  topic: string;
+  /** The target platform */
+  platform: GenerateHooksRequestPlatform;
+}
+
+export interface GenerateHooksResponse {
+  /** List of 15 generated hooks */
+  hooks: string[];
+  platform: string;
+  topic: string;
+}
+
+export interface ErrorResponse {
+  error: string;
+}

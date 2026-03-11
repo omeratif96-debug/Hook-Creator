@@ -1,0 +1,13 @@
+packages:
+  "framer-motion": "For premium spring animations, page transitions, and staggered list reveals"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility for merging tailwind classes without style conflicts"
+
+images:
+  - path: "artifacts/viral-hook-generator/public/images/gradient-bg.png"
+    description: "Abstract gradient mesh background in vibrant violet, deep purple, and energetic pink with soft light leaks. Modern startup aesthetic, extremely clean, minimal, and premium."
+    aspect_ratio: "16:9"
+
+notes:
+  - Using @workspace/api-client-react for generated TanStack query hooks.
+  - Using framer-motion for micro-interactions to give it a polished, high-end feel.

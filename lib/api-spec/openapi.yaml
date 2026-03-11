@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: hooks
+    description: Hook generation operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /hooks/generate:
+    post:
+      operationId: generateHooks
+      tags: [hooks]
+      summary: Generate viral hooks
+      description: Generate 15 viral hooks for a given topic and platform
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateHooksRequest"
+      responses:
+        "200":
+          description: Successfully generated hooks
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateHooksResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +66,39 @@ components:
           type: string
       required:
         - status
-
+    GenerateHooksRequest:
+      type: object
+      properties:
+        topic:
+          type: string
+          description: The video topic or idea
+        platform:
+          type: string
+          enum: [YouTube, TikTok, Instagram]
+          description: The target platform
+      required:
+        - topic
+        - platform
+    GenerateHooksResponse:
+      type: object
+      properties:
+        hooks:
+          type: array
+          items:
+            type: string
+          description: List of 15 generated hooks
+        platform:
+          type: string
+        topic:
+          type: string
+      required:
+        - hooks
+        - platform
+        - topic
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error

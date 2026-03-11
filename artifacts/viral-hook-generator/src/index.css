@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@plugin "@tailwindcss/typography";
+
+@theme inline {
+  --font-sans: 'DM Sans', sans-serif;
+  --font-display: 'Outfit', sans-serif;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-border: hsl(var(--border));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-ring: hsl(var(--ring));
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+}
+
+:root {
+  /* Vibrant, energetic, cool-toned palette */
+  --background: 250 25% 98%;
+  --foreground: 250 40% 12%;
+  
+  --primary: 262 83% 58%;
+  --primary-foreground: 210 40% 98%;
+  
+  --card: 0 0% 100%;
+  --card-foreground: 250 40% 12%;
+  
+  --border: 250 20% 90%;
+  
+  --muted: 250 20% 95%;
+  --muted-foreground: 250 15% 45%;
+  
+  --ring: 262 83% 58%;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased font-sans overflow-x-hidden selection:bg-primary/20 selection:text-primary;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply font-bold tracking-tight;
+  }
+
+  * {
+    @apply border-border;
+  }
+}

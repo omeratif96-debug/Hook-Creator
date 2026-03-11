@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Viral Hook Generator"
+version = "1.0.0"
+id = "artifacts/viral-hook-generator"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+localPort = 25430
+name = "web"
+paths = ["/"]
+
+[services.development]
+run = "pnpm --filter @workspace/viral-hook-generator run dev"
+
+[services.env]
+PORT = "25430"
+BASE_PATH = "/"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/viral-hook-generator", "run", "build"]
+publicDir = "artifacts/viral-hook-generator/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"

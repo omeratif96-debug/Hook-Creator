@@ -14,3 +14,20 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * Generate 15 viral hooks for a given topic and platform
+ * @summary Generate viral hooks
+ */
+export const GenerateHooksBody = zod.object({
+  topic: zod.string().describe("The video topic or idea"),
+  platform: zod
+    .enum(["YouTube", "TikTok", "Instagram"])
+    .describe("The target platform"),
+});
+
+export const GenerateHooksResponse = zod.object({
+  hooks: zod.array(zod.string()).describe("List of 15 generated hooks"),
+  platform: zod.string(),
+  topic: zod.string(),
+});
