@@ -104,7 +104,7 @@ export default function Home() {
                 id="topic"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                placeholder="e.g. A day in the life of a software engineer working remotely, showing the realistic struggles..."
+                placeholder="Example: Porsche Cayenne Turbo review, real estate investment tips, or kids learning colors"
                 className="w-full min-h-[160px] p-6 text-lg rounded-2xl bg-background border-2 border-border focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all resize-none shadow-inner placeholder:text-muted-foreground/60"
               />
             </div>
