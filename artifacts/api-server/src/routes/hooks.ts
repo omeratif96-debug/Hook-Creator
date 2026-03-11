@@ -73,23 +73,44 @@ router.post("/hooks/generate", async (req, res) => {
   const { topic, platform } = parseResult.data;
 
   try {
-    const prompt = `You are a viral content expert specializing in ${platform} hooks. 
-    
-Generate exactly 15 compelling, viral-worthy hook sentences for a video about: "${topic}"
+    const platformGuidance: Record<string, string> = {
+      YouTube: "YouTube titles and thumbnail text — bold, search-optimized, high-stakes language that makes someone click immediately",
+      TikTok: "TikTok opening lines — raw, urgent, conversational, designed to stop a thumb mid-scroll in the first half-second",
+      Instagram: "Instagram caption openers — punchy, relatable, or provocative enough to make someone tap 'more'",
+    };
 
-Requirements:
-- Each hook should be a single sentence or short phrase (not a full script)
-- Hooks should create curiosity, urgency, or emotional pull
-- Tailor the tone and style specifically for ${platform}
-- For YouTube: focus on titles/thumbnail text style hooks
-- For TikTok: casual, trending, conversational hooks with energy
-- For Instagram: polished but engaging caption-style hooks
-- Make them diverse (mix of question hooks, story hooks, controversy hooks, value hooks, etc.)
-- Do NOT number them or add bullet points
-- Return ONLY the 15 hooks, one per line, nothing else
+    const prompt = `You are an elite viral content strategist who has written hooks for creators with 10M+ followers.
 
-Topic: ${topic}
-Platform: ${platform}`;
+Your task: write exactly 15 hooks for a ${platform} video about "${topic}".
+
+Hooks must be:
+- SHORT and PUNCHY — most under 10 words, none longer than 15
+- CURIOSITY-DRIVEN — create an information gap that demands to be filled
+- DRAMATICALLY worded — raise stakes, use tension, surprise, or intrigue
+- ZERO repetition — every hook must use a completely different structure, angle, and opening word
+- OPTIMIZED for ${platform}: ${platformGuidance[platform] ?? platformGuidance["YouTube"]}
+
+Use a different style for each hook. Rotate through these 15 distinct styles (one per hook, in any order):
+1. Shocking stat or claim
+2. Contrarian opinion
+3. "What nobody tells you" reveal
+4. Personal failure confession
+5. Bold promise
+6. Countdown or list tease
+7. Direct challenge to the viewer
+8. Myth-busting statement
+9. Cliffhanger story opener
+10. Forbidden knowledge angle
+11. Time-pressure urgency
+12. Unexpected comparison
+13. Vulnerability/raw honesty
+14. Provocative question
+15. Absurd or extreme scenario
+
+Rules:
+- No numbering, bullets, labels, or quotation marks
+- No two hooks can start with the same word
+- Return ONLY the 15 hooks, one per line, nothing else`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-5.2",
