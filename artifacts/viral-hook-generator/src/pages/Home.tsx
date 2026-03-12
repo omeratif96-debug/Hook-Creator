@@ -96,9 +96,9 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
-            className="text-base text-muted-foreground/70"
+            className="text-sm text-muted-foreground/60 tracking-wide"
           >
-            Perfect for creators, marketers, podcasts, real estate pages, and faceless channels.
+            Used by creators to generate scroll-stopping hooks in seconds.
           </motion.p>
         </div>
 
