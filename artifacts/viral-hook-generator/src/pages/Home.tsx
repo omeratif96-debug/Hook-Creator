@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Clipboard, Loader2, Play, Lock } from "lucide-react";
 import { PlatformToggle } from "@/components/PlatformToggle";
 import { HookCard } from "@/components/HookCard";
+import { WaitlistForm } from "@/components/WaitlistForm";
 import { useViralHooks } from "@/hooks/use-viral-hooks";
 import { useToast } from "@/hooks/use-toast";
 import { useUsageLimit } from "@/hooks/use-usage-limit";
@@ -184,18 +185,10 @@ export default function Home() {
                 <p className="font-semibold text-foreground text-lg">
                   You've reached today's free limit.
                 </p>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Join the waitlist for premium access.
-                </p>
-                <a
-                  href="mailto:?subject=Viral Hook Generator – Waitlist"
-                  className="inline-flex items-center gap-2 mt-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/25 hover:opacity-90 active:scale-95 transition-all"
-                >
-                  Join the Waitlist
-                </a>
-                <p className="text-xs text-muted-foreground pt-1">
+                <p className="text-xs text-muted-foreground">
                   Resets daily at midnight · {limit} free generations per day
                 </p>
+                <WaitlistForm />
               </motion.div>
             )}
           </form>

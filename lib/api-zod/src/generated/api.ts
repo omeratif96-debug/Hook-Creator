@@ -31,3 +31,16 @@ export const GenerateHooksResponse = zod.object({
   platform: zod.string(),
   topic: zod.string(),
 });
+
+/**
+ * Submit an email to join the premium waitlist
+ * @summary Join the waitlist
+ */
+export const JoinWaitlistBody = zod.object({
+  email: zod.string().email(),
+});
+
+export const JoinWaitlistResponse = zod.object({
+  message: zod.string(),
+  alreadyJoined: zod.boolean(),
+});

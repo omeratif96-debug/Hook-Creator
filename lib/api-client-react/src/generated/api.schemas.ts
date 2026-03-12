@@ -35,6 +35,15 @@ export interface GenerateHooksResponse {
   topic: string;
 }
 
+export interface JoinWaitlistRequest {
+  email: string;
+}
+
+export interface JoinWaitlistResponse {
+  message: string;
+  alreadyJoined: boolean;
+}
+
 export interface ErrorResponse {
   error: string;
 }

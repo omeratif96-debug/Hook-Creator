@@ -11,3 +11,5 @@ export * from "./generateHooksRequest";
 export * from "./generateHooksRequestPlatform";
 export * from "./generateHooksResponse";
 export * from "./healthStatus";
+export * from "./joinWaitlistRequest";
+export * from "./joinWaitlistResponse";

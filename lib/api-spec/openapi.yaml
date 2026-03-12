@@ -12,6 +12,8 @@ tags:
     description: Health operations
   - name: hooks
     description: Hook generation operations
+  - name: waitlist
+    description: Waitlist operations
 paths:
   /healthz:
     get:
@@ -47,6 +49,43 @@ paths:
                 $ref: "#/components/schemas/GenerateHooksResponse"
         "400":
           description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /waitlist:
+    post:
+      operationId: joinWaitlist
+      tags: [waitlist]
+      summary: Join the waitlist
+      description: Submit an email to join the premium waitlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JoinWaitlistRequest"
+      responses:
+        "200":
+          description: Successfully joined waitlist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JoinWaitlistResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Email already on waitlist
           content:
             application/json:
               schema:
@@ -95,6 +134,24 @@ components:
         - hooks
         - platform
         - topic
+    JoinWaitlistRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+        - email
+    JoinWaitlistResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        alreadyJoined:
+          type: boolean
+      required:
+        - message
+        - alreadyJoined
     ErrorResponse:
       type: object
       properties:
