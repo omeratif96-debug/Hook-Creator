@@ -73,44 +73,52 @@ router.post("/hooks/generate", async (req, res) => {
   const { topic, platform } = parseResult.data;
 
   try {
-    const platformGuidance: Record<string, string> = {
-      YouTube: "YouTube titles and thumbnail text — bold, search-optimized, high-stakes language that makes someone click immediately",
-      TikTok: "TikTok opening lines — raw, urgent, conversational, designed to stop a thumb mid-scroll in the first half-second",
-      Instagram: "Instagram caption openers — punchy, relatable, or provocative enough to make someone tap 'more'",
+    const platformVoice: Record<string, string> = {
+      YouTube: `YouTube title style: high-stakes, click-driven, every word earns its place. Reads like a headline someone can't scroll past.`,
+      TikTok: `TikTok first-line style: spoken-word energy, casual and urgent. Sounds like something said aloud to a friend — raw, fast, impossible to ignore.`,
+      Instagram: `Instagram caption-opener style: punchy enough to earn the "more" tap. Confident, relatable, or provocative. Never bland.`,
     };
 
-    const prompt = `You are an elite viral content strategist who has written hooks for creators with 10M+ followers.
+    const hookTypeGuide = `
+HOOK TYPES — write exactly 3 hooks of each type (15 total):
 
-Your task: write exactly 15 hooks for a ${platform} video about "${topic}".
+1. CONTRARIAN — Challenges what the viewer already believes. Flips conventional wisdom.
+   Pattern: State the opposite of what most people think. Make it uncomfortable to disagree.
+   Bad: "Most people do this wrong." Good: "Slow and steady doesn't win. Speed does."
 
-Hooks must be:
-- SHORT and PUNCHY — most under 10 words, none longer than 15
-- CURIOSITY-DRIVEN — create an information gap that demands to be filled
-- DRAMATICALLY worded — raise stakes, use tension, surprise, or intrigue
-- ZERO repetition — every hook must use a completely different structure, angle, and opening word
-- OPTIMIZED for ${platform}: ${platformGuidance[platform] ?? platformGuidance["YouTube"]}
+2. CURIOSITY — Opens an information gap the viewer needs to close. Teases without revealing.
+   Pattern: Hint at a secret, surprise, or counterintuitive result without giving it away.
+   Bad: "Here's something interesting." Good: "The result after 30 days shocked even me."
 
-Use a different style for each hook. Rotate through these 15 distinct styles (one per hook, in any order):
-1. Shocking stat or claim
-2. Contrarian opinion
-3. "What nobody tells you" reveal
-4. Personal failure confession
-5. Bold promise
-6. Countdown or list tease
-7. Direct challenge to the viewer
-8. Myth-busting statement
-9. Cliffhanger story opener
-10. Forbidden knowledge angle
-11. Time-pressure urgency
-12. Unexpected comparison
-13. Vulnerability/raw honesty
-14. Provocative question
-15. Absurd or extreme scenario
+3. BENEFIT-DRIVEN — Sells the payoff in one line. Pure value, zero fluff.
+   Pattern: State exactly what the viewer will walk away with. Make it feel urgent and specific.
+   Bad: "You'll learn a lot." Good: "Three sentences that close any sale."
 
-Rules:
-- No numbering, bullets, labels, or quotation marks
-- No two hooks can start with the same word
-- Return ONLY the 15 hooks, one per line, nothing else`;
+4. BOLD STATEMENT — A confident, declarative claim that's impossible to ignore.
+   Pattern: Commit fully. No hedging, no "maybe." The bolder the truth, the better.
+   Bad: "This could be important." Good: "This is the only metric that actually matters."
+
+5. SUSPENSE — Drops the viewer mid-story or mid-tension. Forces them to stay to find out.
+   Pattern: Start in the middle of an outcome, decision, or disaster. Never explain upfront.
+   Bad: "Let me tell you a story." Good: "By the time I realized my mistake, it was already live."
+`;
+
+    const prompt = `You are a world-class viral content strategist. Your hooks have driven millions of views.
+
+TASK: Write exactly 15 hooks for a ${platform} video about: ${topic}
+
+PLATFORM VOICE: ${platformVoice[platform] ?? platformVoice["YouTube"]}
+
+${hookTypeGuide}
+
+STRICT RULES — violations make the output unusable:
+- Every hook must be SHORT: 5–12 words. Hard maximum 14 words. No exceptions.
+- No two hooks may start with the same word
+- No quotation marks anywhere in the output
+- No numbering, bullets, labels, category names, or extra commentary
+- No filler openers: never start with I, You, This, The, or How
+- Each hook must feel completely different in structure, tone, and angle from every other
+- Return ONLY the 15 hooks, one per line, nothing else — no blank lines between them`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-5.2",
