@@ -97,11 +97,23 @@ export default function Home() {
           </motion.p>
         </div>
 
+        {/* Try it free label */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.35, ease: "easeOut" }}
+          className="flex justify-center"
+        >
+          <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/30">
+            ✦ Try it free now
+          </span>
+        </motion.div>
+
         {/* Input Form */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
+          transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
           className="max-w-3xl mx-auto bg-card/60 backdrop-blur-2xl border-2 border-white/20 dark:border-white/10 shadow-2xl shadow-black/5 rounded-[2rem] p-6 sm:p-10"
         >
           <form onSubmit={handleSubmit} className="space-y-8">
