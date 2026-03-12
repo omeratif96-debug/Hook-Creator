@@ -73,57 +73,57 @@ router.post("/hooks/generate", async (req, res) => {
   const { topic, platform } = parseResult.data;
 
   try {
-    const platformVoice: Record<string, string> = {
-      YouTube: `YouTube title style: high-stakes, click-driven, every word earns its place. Reads like a headline someone can't scroll past.`,
-      TikTok: `TikTok first-line style: spoken-word energy, casual and urgent. Sounds like something said aloud to a friend — raw, fast, impossible to ignore.`,
-      Instagram: `Instagram caption-opener style: punchy enough to earn the "more" tap. Confident, relatable, or provocative. Never bland.`,
+    const platformExamples: Record<string, string> = {
+      YouTube: `Real viral YouTube titles for reference (notice the natural phrasing):
+- I Tested 7 Sleep Hacks and One Actually Worked
+- Why Rich People Buy Used Cars
+- Nobody Told Me This Before I Quit My Job
+- Buying a House at 22 Changed Everything
+- We Tried the World's Hardest Diet for 30 Days`,
+      TikTok: `Real viral TikTok openers for reference (notice how naturally they read aloud):
+- Wait until you see what happened at the end
+- Renting vs buying — I finally did the math
+- Things nobody tells you about working from home
+- Three things I stopped buying to save $800 a month
+- My gym results after 90 days of actually being consistent`,
+      Instagram: `Real viral Instagram caption openers for reference (notice the confident, direct tone):
+- Nobody talks about the downside of passive income
+- Here is what six figures actually feels like
+- Stopped doing this one thing and everything changed
+- Real estate agents hate this question — ask it anyway
+- Most people quit right before it gets good`,
     };
 
-    const hookTypeGuide = `
-HOOK TYPES — write exactly 3 hooks of each type (15 total):
+    const systemPrompt = `You write viral hooks for ${platform} videos. Every hook you write reads like a natural, fluent English headline — the kind a real creator would actually publish. You never produce robotic, templated, or grammatically awkward phrasing.`;
 
-1. CONTRARIAN — Challenges what the viewer already believes. Flips conventional wisdom.
-   Pattern: State the opposite of what most people think. Make it uncomfortable to disagree.
-   Bad: "Most people do this wrong." Good: "Slow and steady doesn't win. Speed does."
+    const prompt = `Write exactly 15 hooks for a ${platform} video about: ${topic}
 
-2. CURIOSITY — Opens an information gap the viewer needs to close. Teases without revealing.
-   Pattern: Hint at a secret, surprise, or counterintuitive result without giving it away.
-   Bad: "Here's something interesting." Good: "The result after 30 days shocked even me."
+${platformExamples[platform] ?? platformExamples["YouTube"]}
 
-3. BENEFIT-DRIVEN — Sells the payoff in one line. Pure value, zero fluff.
-   Pattern: State exactly what the viewer will walk away with. Make it feel urgent and specific.
-   Bad: "You'll learn a lot." Good: "Three sentences that close any sale."
+Write exactly 3 hooks of each style below (15 total):
+- CONTRARIAN: Challenges a belief most viewers hold. States the uncomfortable opposite truth.
+- CURIOSITY: Opens a gap the viewer must close. Teases an outcome without revealing it.
+- BENEFIT-DRIVEN: States the exact payoff the viewer gets. Specific, urgent, zero fluff.
+- BOLD STATEMENT: A fully committed claim. No hedging. Reads like a fact, not an opinion.
+- SUSPENSE: Drops the viewer into a moment of tension or outcome. Never explains what happened.
 
-4. BOLD STATEMENT — A confident, declarative claim that's impossible to ignore.
-   Pattern: Commit fully. No hedging, no "maybe." The bolder the truth, the better.
-   Bad: "This could be important." Good: "This is the only metric that actually matters."
-
-5. SUSPENSE — Drops the viewer mid-story or mid-tension. Forces them to stay to find out.
-   Pattern: Start in the middle of an outcome, decision, or disaster. Never explain upfront.
-   Bad: "Let me tell you a story." Good: "By the time I realized my mistake, it was already live."
-`;
-
-    const prompt = `You are a world-class viral content strategist. Your hooks have driven millions of views.
-
-TASK: Write exactly 15 hooks for a ${platform} video about: ${topic}
-
-PLATFORM VOICE: ${platformVoice[platform] ?? platformVoice["YouTube"]}
-
-${hookTypeGuide}
-
-STRICT RULES — violations make the output unusable:
-- Every hook must be SHORT: 5–12 words. Hard maximum 14 words. No exceptions.
-- No two hooks may start with the same word
-- No quotation marks anywhere in the output
-- No numbering, bullets, labels, category names, or extra commentary
-- No filler openers: never start with I, You, This, The, or How
-- Each hook must feel completely different in structure, tone, and angle from every other
-- Return ONLY the 15 hooks, one per line, nothing else — no blank lines between them`;
+OUTPUT RULES — every violation ruins the output:
+- 6 to 12 words per hook. Never shorter, never longer.
+- Natural spoken English only — read each hook aloud before including it
+- No quotation marks anywhere
+- No numbering, bullets, labels, or blank lines between hooks
+- No awkward grammar, no AI-sounding phrasing, no passive voice
+- No two hooks start with the same word
+- Each hook must have a completely different structure and angle from every other
+- Return only the 15 hooks, one per line, nothing else`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-5.2",
       max_completion_tokens: 1024,
-      messages: [{ role: "user", content: prompt }],
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: prompt },
+      ],
     });
 
     const content = response.choices[0]?.message?.content ?? "";
