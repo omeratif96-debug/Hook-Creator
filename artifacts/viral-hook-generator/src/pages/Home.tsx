@@ -1,20 +1,23 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Clipboard, Loader2, Play } from "lucide-react";
+import { Sparkles, Clipboard, Loader2, Play, Lock } from "lucide-react";
 import { PlatformToggle } from "@/components/PlatformToggle";
 import { HookCard } from "@/components/HookCard";
 import { useViralHooks } from "@/hooks/use-viral-hooks";
 import { useToast } from "@/hooks/use-toast";
+import { useUsageLimit } from "@/hooks/use-usage-limit";
 import type { GenerateHooksRequestPlatform } from "@workspace/api-client-react";
 
 export default function Home() {
   const { toast } = useToast();
   const [topic, setTopic] = useState("");
   const { mutate, isPending, hooks, platform, setPlatform } = useViralHooks();
+  const { canGenerate, remaining, limit, recordUsage } = useUsageLimit();
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canGenerate) return;
     if (!topic.trim()) {
       toast({
         title: "Topic required",
@@ -23,11 +26,12 @@ export default function Home() {
       });
       return;
     }
-    
+
     mutate(
       { data: { topic, platform } },
       {
-        onSettled: () => {
+        onSuccess: () => {
+          recordUsage();
           setTimeout(() => {
             resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
           }, 100);
@@ -140,26 +144,60 @@ export default function Home() {
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={isPending}
-              className="w-full relative group overflow-hidden rounded-2xl"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-pink-500 transition-transform duration-500 group-hover:scale-105 group-active:scale-95" />
-              <div className="relative flex items-center justify-center gap-3 py-5 px-8 text-white font-bold text-xl shadow-xl shadow-primary/30 group-active:translate-y-1 transition-all">
-                {isPending ? (
-                  <>
-                    <Loader2 className="animate-spin" size={24} />
-                    <span>Brainstorming magic...</span>
-                  </>
-                ) : (
-                  <>
-                    <Play fill="currentColor" size={20} />
-                    <span>Generate Hooks</span>
-                  </>
-                )}
+            {canGenerate ? (
+              <div className="space-y-3">
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="w-full relative group overflow-hidden rounded-2xl"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-pink-500 transition-transform duration-500 group-hover:scale-105 group-active:scale-95" />
+                  <div className="relative flex items-center justify-center gap-3 py-5 px-8 text-white font-bold text-xl shadow-xl shadow-primary/30 group-active:translate-y-1 transition-all">
+                    {isPending ? (
+                      <>
+                        <Loader2 className="animate-spin" size={24} />
+                        <span>Brainstorming magic...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play fill="currentColor" size={20} />
+                        <span>Generate Hooks</span>
+                      </>
+                    )}
+                  </div>
+                </button>
+                <p className="text-center text-sm text-muted-foreground">
+                  {remaining} of {limit} free generation{remaining !== 1 ? "s" : ""} remaining today
+                </p>
               </div>
-            </button>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-2xl border-2 border-border bg-muted/50 p-6 text-center space-y-3"
+              >
+                <div className="flex justify-center">
+                  <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                    <Lock size={22} className="text-muted-foreground" />
+                  </div>
+                </div>
+                <p className="font-semibold text-foreground text-lg">
+                  You've reached today's free limit.
+                </p>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Join the waitlist for premium access.
+                </p>
+                <a
+                  href="mailto:?subject=Viral Hook Generator – Waitlist"
+                  className="inline-flex items-center gap-2 mt-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/25 hover:opacity-90 active:scale-95 transition-all"
+                >
+                  Join the Waitlist
+                </a>
+                <p className="text-xs text-muted-foreground pt-1">
+                  Resets daily at midnight · {limit} free generations per day
+                </p>
+              </motion.div>
+            )}
           </form>
         </motion.div>
 
