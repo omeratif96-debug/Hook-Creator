@@ -75,16 +75,25 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
             className="text-5xl sm:text-6xl lg:text-7xl font-display font-extrabold text-foreground mb-6 leading-tight tracking-tight"
           >
-            Generate viral hooks in <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-pink-500">seconds.</span>
+            Generate Viral Hooks for <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-pink-500">YouTube, TikTok & Instagram</span>
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
             className="text-xl text-muted-foreground font-medium"
           >
-            Stop staring at a blank page. Tell us your idea, pick a platform, and get 15 scroll-stopping hooks guaranteed to boost retention.
+            Turn any video idea into scroll-stopping hooks in seconds.
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
+            className="text-base text-muted-foreground/70"
+          >
+            Perfect for creators, marketers, podcasts, real estate pages, and faceless channels.
           </motion.p>
         </div>
 
