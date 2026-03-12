@@ -28,9 +28,16 @@ export interface GenerateHooksRequest {
   platform: GenerateHooksRequestPlatform;
 }
 
-export interface GenerateHooksResponse {
-  /** List of 15 generated hooks */
+export interface HookCategory {
+  name: string;
   hooks: string[];
+}
+
+export interface GenerateHooksResponse {
+  /** Flat list of all 15 generated hooks */
+  hooks: string[];
+  /** Hooks grouped by category */
+  categories: HookCategory[];
   platform: string;
   topic: string;
 }

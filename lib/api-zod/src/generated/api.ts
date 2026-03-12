@@ -27,7 +27,17 @@ export const GenerateHooksBody = zod.object({
 });
 
 export const GenerateHooksResponse = zod.object({
-  hooks: zod.array(zod.string()).describe("List of 15 generated hooks"),
+  hooks: zod
+    .array(zod.string())
+    .describe("Flat list of all 15 generated hooks"),
+  categories: zod
+    .array(
+      zod.object({
+        name: zod.string(),
+        hooks: zod.array(zod.string()),
+      }),
+    )
+    .describe("Hooks grouped by category"),
   platform: zod.string(),
   topic: zod.string(),
 });

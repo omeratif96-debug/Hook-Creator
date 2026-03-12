@@ -12,7 +12,7 @@ import type { GenerateHooksRequestPlatform } from "@workspace/api-client-react";
 export default function Home() {
   const { toast } = useToast();
   const [topic, setTopic] = useState("");
-  const { mutate, isPending, hooks, platform, setPlatform } = useViralHooks();
+  const { mutate, isPending, hooks, categories, platform, setPlatform } = useViralHooks();
   const { canGenerate, remaining, limit, recordUsage } = useUsageLimit();
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -196,23 +196,22 @@ export default function Home() {
 
         {/* Results Section */}
         <AnimatePresence>
-          {hooks.length > 0 && (
-            <motion.div 
+          {categories.length > 0 && (
+            <motion.div
               ref={resultsRef}
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               className="mt-24 pt-12 border-t-2 border-border/50"
             >
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-12">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-14">
                 <div>
                   <h2 className="text-3xl font-display font-bold text-foreground">
                     Your {platform} Hooks
                   </h2>
                   <p className="text-muted-foreground mt-2 font-medium">
-                    Here are 15 scroll-stopping ideas for your next video.
+                    15 hooks across 5 styles — pick your favourites.
                   </p>
                 </div>
-                
                 <button
                   onClick={handleCopyAll}
                   className="flex items-center gap-2 px-6 py-3 bg-card hover:bg-primary hover:text-primary-foreground text-foreground border-2 border-border hover:border-primary shadow-sm hover:shadow-md rounded-xl font-bold transition-all duration-300 active:scale-95 whitespace-nowrap"
@@ -222,22 +221,35 @@ export default function Home() {
                 </button>
               </div>
 
-              <motion.div 
-                variants={{
-                  hidden: { opacity: 0 },
-                  show: {
-                    opacity: 1,
-                    transition: { staggerChildren: 0.1 }
-                  }
-                }}
-                initial="hidden"
-                animate="show"
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-              >
-                {hooks.map((hook, index) => (
-                  <HookCard key={index} index={index + 1} text={hook} />
+              <div className="space-y-12">
+                {categories.map((category, catIdx) => (
+                  <motion.div
+                    key={category.name}
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: catIdx * 0.08, duration: 0.4 }}
+                  >
+                    <div className="flex items-center gap-3 mb-5">
+                      <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
+                        {catIdx + 1}
+                      </span>
+                      <h3 className="text-lg font-display font-bold text-foreground">
+                        {category.name}
+                      </h3>
+                      <div className="flex-1 h-px bg-border" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {category.hooks.map((hook, hookIdx) => (
+                        <HookCard
+                          key={hookIdx}
+                          index={catIdx * 3 + hookIdx + 1}
+                          text={hook}
+                        />
+                      ))}
+                    </div>
+                  </motion.div>
                 ))}
-              </motion.div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

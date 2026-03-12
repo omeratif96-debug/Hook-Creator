@@ -118,6 +118,18 @@ components:
       required:
         - topic
         - platform
+    HookCategory:
+      type: object
+      properties:
+        name:
+          type: string
+        hooks:
+          type: array
+          items:
+            type: string
+      required:
+        - name
+        - hooks
     GenerateHooksResponse:
       type: object
       properties:
@@ -125,13 +137,19 @@ components:
           type: array
           items:
             type: string
-          description: List of 15 generated hooks
+          description: Flat list of all 15 generated hooks
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/HookCategory"
+          description: Hooks grouped by category
         platform:
           type: string
         topic:
           type: string
       required:
         - hooks
+        - categories
         - platform
         - topic
     JoinWaitlistRequest:
