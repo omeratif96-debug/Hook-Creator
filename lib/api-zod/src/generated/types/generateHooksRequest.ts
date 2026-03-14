@@ -5,6 +5,7 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { GenerateHooksRequestContentAngle } from "./generateHooksRequestContentAngle";
 import type { GenerateHooksRequestPlatform } from "./generateHooksRequestPlatform";
 
 export interface GenerateHooksRequest {
@@ -12,4 +13,6 @@ export interface GenerateHooksRequest {
   topic: string;
   /** The target platform */
   platform: GenerateHooksRequestPlatform;
+  /** The content angle or style */
+  contentAngle: GenerateHooksRequestContentAngle;
 }

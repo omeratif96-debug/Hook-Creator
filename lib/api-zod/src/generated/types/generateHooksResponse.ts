@@ -5,13 +5,15 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import type { HookCategory } from "./hookCategory";
 
 export interface GenerateHooksResponse {
-  /** Flat list of all 15 generated hooks */
+  /** 10 viral hooks */
   hooks: string[];
-  /** Hooks grouped by category */
-  categories: HookCategory[];
+  /** 10 clickable titles */
+  titles: string[];
+  /** 5 intro script openers */
+  introScripts: string[];
   platform: string;
   topic: string;
+  contentAngle: string;
 }

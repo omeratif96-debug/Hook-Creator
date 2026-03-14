@@ -8,9 +8,13 @@
 
 export * from "./errorResponse";
 export * from "./generateHooksRequest";
+export * from "./generateHooksRequestContentAngle";
 export * from "./generateHooksRequestPlatform";
 export * from "./generateHooksResponse";
 export * from "./healthStatus";
-export * from "./hookCategory";
 export * from "./joinWaitlistRequest";
 export * from "./joinWaitlistResponse";
+export * from "./remixHookRequest";
+export * from "./remixHookRequestContentAngle";
+export * from "./remixHookRequestPlatform";
+export * from "./remixHookResponse";

@@ -16,30 +16,59 @@ export const HealthCheckResponse = zod.object({
 });
 
 /**
- * Generate 15 viral hooks for a given topic and platform
- * @summary Generate viral hooks
+ * Generate content for a given topic, platform, and content angle
+ * @summary Generate viral hooks, titles, and intro scripts
  */
 export const GenerateHooksBody = zod.object({
   topic: zod.string().describe("The video topic or idea"),
   platform: zod
     .enum(["YouTube", "TikTok", "Instagram"])
     .describe("The target platform"),
+  contentAngle: zod
+    .enum([
+      "Educational",
+      "Storytelling",
+      "Controversial",
+      "Review",
+      "Comparison",
+      "Listicle",
+      "Inspirational",
+    ])
+    .describe("The content angle or style"),
 });
 
 export const GenerateHooksResponse = zod.object({
-  hooks: zod
-    .array(zod.string())
-    .describe("Flat list of all 15 generated hooks"),
-  categories: zod
-    .array(
-      zod.object({
-        name: zod.string(),
-        hooks: zod.array(zod.string()),
-      }),
-    )
-    .describe("Hooks grouped by category"),
+  hooks: zod.array(zod.string()).describe("10 viral hooks"),
+  titles: zod.array(zod.string()).describe("10 clickable titles"),
+  introScripts: zod.array(zod.string()).describe("5 intro script openers"),
   platform: zod.string(),
   topic: zod.string(),
+  contentAngle: zod.string(),
+});
+
+/**
+ * Generate 10 variations of a given hook
+ * @summary Remix a single hook into variations
+ */
+export const RemixHookBody = zod.object({
+  hook: zod.string().describe("The hook to remix"),
+  topic: zod.string(),
+  platform: zod.enum(["YouTube", "TikTok", "Instagram"]),
+  contentAngle: zod.enum([
+    "Educational",
+    "Storytelling",
+    "Controversial",
+    "Review",
+    "Comparison",
+    "Listicle",
+    "Inspirational",
+  ]),
+});
+
+export const RemixHookResponse = zod.object({
+  variations: zod
+    .array(zod.string())
+    .describe("10 remixed variations of the original hook"),
 });
 
 /**

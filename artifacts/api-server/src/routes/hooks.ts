@@ -1,123 +1,162 @@
 import { Router, type IRouter } from "express";
 import { openai } from "@workspace/integrations-openai-ai-server";
-import { GenerateHooksBody } from "@workspace/api-zod";
+import { GenerateHooksBody, RemixHookBody } from "@workspace/api-zod";
 
 const router: IRouter = Router();
 
-const CATEGORY_NAMES = [
-  "Curiosity Hooks",
-  "Contrarian Hooks",
-  "Benefit Hooks",
-  "Story Hooks",
-  "Bold Statement Hooks",
-];
+// ── Placeholder data ──────────────────────────────────────────────────────────
 
-const PLACEHOLDER_CATEGORIES: Record<string, { name: string; hooks: string[] }[]> = {
-  YouTube: [
-    { name: "Curiosity Hooks", hooks: [
-      "The {topic} secret nobody is willing to say out loud",
-      "What actually happens after one year of {topic}",
-      "Why everything you know about {topic} is backwards",
-    ]},
-    { name: "Contrarian Hooks", hooks: [
-      "Stop wasting money on {topic} — here is why",
-      "Every expert on {topic} got this completely wrong",
-      "The popular {topic} advice that ruined my results",
-    ]},
-    { name: "Benefit Hooks", hooks: [
-      "Master {topic} in a weekend with this method",
-      "One change that doubled my {topic} results overnight",
-      "Save hours every week by doing {topic} this way",
-    ]},
-    { name: "Story Hooks", hooks: [
-      "By the time I figured out {topic} I had lost thousands",
-      "My first month doing {topic} almost broke me",
-      "I was embarrassed by my {topic} until this happened",
-    ]},
-    { name: "Bold Statement Hooks", hooks: [
-      "{topic} is the single best skill you can build right now",
-      "Nothing changed my life faster than learning {topic}",
-      "Most people will never get good at {topic} — here is why",
-    ]},
-  ],
-  TikTok: [
-    { name: "Curiosity Hooks", hooks: [
-      "Wait until you see what {topic} actually does",
-      "Nobody talks about this part of {topic}",
-      "Things I wish someone told me about {topic} sooner",
-    ]},
-    { name: "Contrarian Hooks", hooks: [
-      "Unpopular opinion: {topic} is way overrated",
-      "Doing {topic} the normal way held me back for years",
-      "Everyone got {topic} wrong and I have proof",
-    ]},
-    { name: "Benefit Hooks", hooks: [
-      "Three {topic} tricks that actually changed my routine",
-      "Do this one thing and {topic} gets so much easier",
-      "Save this if you are trying to get better at {topic}",
-    ]},
-    { name: "Story Hooks", hooks: [
-      "So I tried {topic} for thirty days and this happened",
-      "The day {topic} completely changed how I see everything",
-      "My {topic} experiment went completely off the rails",
-    ]},
-    { name: "Bold Statement Hooks", hooks: [
-      "{topic} is genuinely the move right now — no debate",
-      "Starting {topic} earlier would have changed my life",
-      "Real talk — {topic} hits different when you do it right",
-    ]},
-  ],
-  Instagram: [
-    { name: "Curiosity Hooks", hooks: [
-      "Here is what nobody posts about {topic}",
-      "The {topic} result that genuinely surprised me",
-      "Save this before you start your {topic} journey",
-    ]},
-    { name: "Contrarian Hooks", hooks: [
-      "The {topic} advice everyone gives is actually wrong",
-      "Stopped doing {topic} the traditional way and won",
-      "Most {topic} content is missing the most important part",
-    ]},
-    { name: "Benefit Hooks", hooks: [
-      "Five {topic} habits that pay off immediately",
-      "Here is the fastest way to see results with {topic}",
-      "Do this before anything else when starting {topic}",
-    ]},
-    { name: "Story Hooks", hooks: [
-      "Six months of {topic} and my life looks completely different",
-      "Almost gave up on {topic} before I found this approach",
-      "My honest review after a full year of {topic}",
-    ]},
-    { name: "Bold Statement Hooks", hooks: [
-      "{topic} is the best investment I have ever made",
-      "Consistent {topic} beats every shortcut every single time",
-      "There is no version of success here without {topic}",
-    ]},
-  ],
+const PLACEHOLDER: Record<string, { hooks: string[]; titles: string[]; introScripts: string[] }> = {
+  YouTube: {
+    hooks: [
+      "Nobody told me this before I tried it for 30 days",
+      "I spent $10,000 on this so you don't have to",
+      "The secret experts won't put in their videos",
+      "What actually changes after one full year of this",
+      "Every popular piece of advice on this is backwards",
+      "I was doing it wrong for three years — here's why",
+      "This one thing doubled my results in a single week",
+      "The version they show on social media is a lie",
+      "Stop buying this — do this instead and save hundreds",
+      "Most people quit right before it actually starts working",
+    ],
+    titles: [
+      "I Tested Every Method for 30 Days — Here's What Worked",
+      "Why Experts Get This Completely Wrong",
+      "The Honest Truth Nobody Talks About",
+      "What Happens After One Year of Doing This Every Day",
+      "I Tried the Most Expensive Option — Was It Worth It?",
+      "The Beginner Mistake That Costs Everyone Months of Progress",
+      "Stop Doing This — Do This Instead",
+      "The Method I Wish I Had Found Years Ago",
+      "Everything You Think You Know About This Is Wrong",
+      "From Zero to Results in 30 Days — My Full Breakdown",
+    ],
+    introScripts: [
+      "Before I show you the results, I need to be honest with you — I almost quit halfway through. What kept me going changed everything I thought I knew about this.",
+      "I've seen hundreds of videos on this topic. Almost all of them miss the one thing that actually matters. Today I'm going to show you exactly what that is.",
+      "Six months ago I was exactly where you are right now. Frustrated, confused, and ready to give up. This is the video I wish someone had made for me back then.",
+      "Most people approach this completely backwards. They focus on the wrong thing first, burn out fast, and never see the results they're after. Here's the right order.",
+      "Real talk — I wasted two years doing this the hard way before I finally figured out the shortcut. By the end of this video, you won't make the same mistake.",
+    ],
+  },
+  TikTok: {
+    hooks: [
+      "Wait until you see what happened at the end of this",
+      "Things nobody tells you when you first start out",
+      "This changed everything and I can't stop thinking about it",
+      "POV: you finally figure out what everyone else already knows",
+      "I tried this for a week and here's what actually happened",
+      "Unpopular opinion — and I have receipts to prove it",
+      "Tell me you've been doing it wrong without telling me",
+      "The part they always leave out of the tutorial",
+      "Day one versus day thirty — the difference will shock you",
+      "Doing this one thing saved me so much time and money",
+    ],
+    titles: [
+      "Wait for the Reveal at the End",
+      "Things Nobody Tells You When You Start",
+      "The Part They Always Leave Out",
+      "I Tried This for 30 Days — Here's What Happened",
+      "Unpopular Opinion — And I'm Sticking With It",
+      "POV: You Finally Figure This Out",
+      "Day 1 vs Day 30 — The Difference Is Wild",
+      "This One Habit Changed Everything for Me",
+      "What They Don't Show You on Social Media",
+      "Rating Every Method From Worst to Best",
+    ],
+    introScripts: [
+      "Okay, stay with me because this one is going to change how you think about it. I tested this for a full week so you don't have to.",
+      "This is the thing I wish someone had put on my For You Page two years ago. By the end of this video you'll understand why everyone gets it wrong.",
+      "Real quick — if you've been struggling with this, it's not your fault. The advice floating around is genuinely bad. Here's what actually works.",
+      "I'm going to show you something that took me way too long to figure out. It looks simple but most people completely miss it.",
+      "Three months ago I was in your position, totally overwhelmed. This one change made everything else click into place.",
+    ],
+  },
+  Instagram: {
+    hooks: [
+      "Here is what nobody actually posts about this",
+      "Save this before you start — you will thank yourself later",
+      "Everything I wish I knew six months before I began",
+      "The checklist that changed my entire approach to this",
+      "Stop falling for this advice — here is what works instead",
+      "Honest review after a full year of doing this consistently",
+      "Drop a comment if you needed to see this today",
+      "The before-and-after nobody shows you on Instagram",
+      "Five things I stopped doing that changed everything",
+      "This is the sign you have been waiting for — save it",
+    ],
+    titles: [
+      "Everything I Wish I Knew Before Starting",
+      "The Honest Review Nobody Posts",
+      "Five Things That Actually Work",
+      "Save This for Later — You Will Need It",
+      "What Six Months of Consistency Looks Like",
+      "The Checklist That Changed My Entire Routine",
+      "Swipe to See the Transformation",
+      "What Nobody Posts About the Downside",
+      "Before You Start — Read This First",
+      "The Real Side of This That Everyone Hides",
+    ],
+    introScripts: [
+      "Saving this post is step one. Because what I'm about to share took me six months of trial and error to figure out, and I want you to have it in 60 seconds.",
+      "Real talk — the version of this that goes viral on Instagram is not the version that actually works. Here's the honest breakdown.",
+      "I almost didn't post this because it goes against what most accounts in this space teach. But the results speak for themselves, so here we go.",
+      "This is for anyone who has tried everything and still isn't seeing results. You're not doing it wrong — you're just missing this one piece.",
+      "Before you spend another dollar or another hour on this, swipe through these five things. They would have saved me a year of frustration.",
+    ],
+  },
 };
 
-function getPlaceholderCategories(topic: string, platform: string) {
-  const cats = PLACEHOLDER_CATEGORIES[platform] ?? PLACEHOLDER_CATEGORIES["YouTube"];
-  return cats.map((cat) => ({
-    name: cat.name,
-    hooks: cat.hooks.map((h) => h.replace(/{topic}/g, topic)),
-  }));
+function getPlaceholder(topic: string, platform: string) {
+  const p = PLACEHOLDER[platform] ?? PLACEHOLDER.YouTube;
+  const sub = (s: string) => s.replace(/{topic}/g, topic);
+  return {
+    hooks: p.hooks.map(sub),
+    titles: p.titles.map(sub),
+    introScripts: p.introScripts.map(sub),
+  };
 }
 
-function parseCategories(text: string): { name: string; hooks: string[] }[] {
-  const results: { name: string; hooks: string[] }[] = [];
-  const sections = text.split(/^##\s+/m).filter((s) => s.trim().length > 0);
+// ── Parsers ───────────────────────────────────────────────────────────────────
 
-  for (const section of sections) {
-    const lines = section.split("\n").map((l) => l.trim()).filter((l) => l.length > 0);
-    if (lines.length < 2) continue;
-    const name = lines[0].replace(/:$/, "").trim();
-    const hooks = lines.slice(1).filter((l) => !l.startsWith("#")).slice(0, 3);
-    if (hooks.length > 0) results.push({ name, hooks });
-  }
+function parseSection(text: string, header: string, max: number): string[] {
+  const headerPattern = new RegExp(`##\\s*${header}`, "i");
+  const nextHeader = /^##\s+/m;
 
-  return results;
+  const start = text.search(headerPattern);
+  if (start === -1) return [];
+
+  const afterHeader = text.slice(start).replace(headerPattern, "").trimStart();
+  const nextMatch = afterHeader.search(nextHeader);
+  const chunk = nextMatch === -1 ? afterHeader : afterHeader.slice(0, nextMatch);
+
+  return chunk
+    .split("\n")
+    .map((l) => l.trim().replace(/^[-*\d.]+\s*/, ""))
+    .filter((l) => l.length > 0)
+    .slice(0, max);
 }
+
+// ── Platform examples ─────────────────────────────────────────────────────────
+
+const PLATFORM_EXAMPLES: Record<string, string> = {
+  YouTube: `Reference — real viral YouTube titles:
+- I Tested 7 Sleep Hacks and One Actually Worked
+- Why Rich People Buy Used Cars
+- Nobody Told Me This Before I Quit My Job
+- Buying a House at 22 Changed Everything`,
+  TikTok: `Reference — real viral TikTok openers:
+- Wait until you see what happened at the end
+- Things nobody tells you about working from home
+- Three things I stopped buying to save $800 a month`,
+  Instagram: `Reference — real viral Instagram openers:
+- Nobody talks about the downside of passive income
+- Stopped doing this one thing and everything changed
+- Most people quit right before it gets good`,
+};
+
+// ── Routes ────────────────────────────────────────────────────────────────────
 
 router.post("/hooks/generate", async (req, res) => {
   const parseResult = GenerateHooksBody.safeParse(req.body);
@@ -126,75 +165,39 @@ router.post("/hooks/generate", async (req, res) => {
     return;
   }
 
-  const { topic, platform } = parseResult.data;
+  const { topic, platform, contentAngle } = parseResult.data;
 
   try {
-    const platformExamples: Record<string, string> = {
-      YouTube: `Reference — real viral YouTube titles:
-- I Tested 7 Sleep Hacks and One Actually Worked
-- Why Rich People Buy Used Cars
-- Nobody Told Me This Before I Quit My Job
-- Buying a House at 22 Changed Everything`,
-      TikTok: `Reference — real viral TikTok openers:
-- Wait until you see what happened at the end
-- Renting vs buying — I finally did the math
-- Things nobody tells you about working from home
-- Three things I stopped buying to save $800 a month`,
-      Instagram: `Reference — real viral Instagram caption openers:
-- Nobody talks about the downside of passive income
-- Stopped doing this one thing and everything changed
-- Real estate agents hate this question — ask it anyway
-- Most people quit right before it gets good`,
-    };
+    const systemPrompt = `You are a viral content strategist for ${platform}. You write hooks, titles, and intro scripts that read like real published content — natural, fluent, and immediately compelling. Your output is always platform-appropriate and angle-aware.`;
 
-    const systemPrompt = `You write viral hooks for ${platform} videos. Every hook reads like a natural, fluent English headline that a real creator would publish. You never produce robotic, templated, or grammatically awkward phrasing.`;
+    const prompt = `Generate content for a ${platform} video about: "${topic}"
+Content angle: ${contentAngle}
 
-    const prompt = `Write exactly 15 hooks for a ${platform} video about: ${topic}
+${PLATFORM_EXAMPLES[platform] ?? PLATFORM_EXAMPLES.YouTube}
 
-${platformExamples[platform] ?? platformExamples["YouTube"]}
+Output exactly in this format — each ## header is required:
 
-Output the hooks grouped into exactly these 5 categories, 3 hooks each.
-Use exactly this format — the ## prefix on each category name is required:
+## Viral Hooks
+[10 short punchy hooks, one per line, 6-12 words each, curiosity-driven, varied structure, no quotation marks]
 
-## Curiosity Hooks
-[hook 1]
-[hook 2]
-[hook 3]
-## Contrarian Hooks
-[hook 4]
-[hook 5]
-[hook 6]
-## Benefit Hooks
-[hook 7]
-[hook 8]
-[hook 9]
-## Story Hooks
-[hook 10]
-[hook 11]
-[hook 12]
-## Bold Statement Hooks
-[hook 13]
-[hook 14]
-[hook 15]
+## YouTube Titles
+[10 clickable titles, one per line, Title Case, strong curiosity and clarity, no quotation marks]
 
-Category definitions:
-- Curiosity Hooks: Open an information gap. Tease an outcome without revealing it.
-- Contrarian Hooks: Challenge a belief most viewers hold. State the uncomfortable opposite.
-- Benefit Hooks: State the exact payoff the viewer gets. Specific, urgent, zero fluff.
-- Story Hooks: Drop the viewer mid-tension or mid-outcome. Never explain what happened upfront.
-- Bold Statement Hooks: A fully committed declarative claim. No hedging. Reads like a fact.
+## Intro Scripts
+[5 opening lines or short intro scripts, one per line, 1-3 sentences each, conversational and engaging, no quotation marks]
 
-Rules for every hook:
-- 6 to 12 words. Hard maximum.
-- Natural spoken English — sounds right when read aloud
-- No quotation marks
+Rules for all output:
+- Natural spoken English only — each line must sound good read aloud
+- No quotation marks anywhere
 - No numbering, bullets, or extra commentary
-- No awkward grammar or passive voice
-- Each hook completely different in structure and angle from every other`;
+- No two items start with the same word
+- Every item must be unique in angle and structure
+- Be platform-aware (${platform}) and angle-aware (${contentAngle})
+- Hooks and titles: no awkward grammar, no passive voice, no AI-sounding phrasing`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-5.2",
-      max_completion_tokens: 1024,
+      max_completion_tokens: 1500,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: prompt },
@@ -202,28 +205,80 @@ Rules for every hook:
     });
 
     const content = response.choices[0]?.message?.content ?? "";
-    const categories = parseCategories(content);
 
-    if (categories.length === 0) {
-      const fallback = getPlaceholderCategories(topic, platform);
-      const hooks = fallback.flatMap((c) => c.hooks);
-      res.json({ hooks, categories: fallback, platform, topic });
+    const hooks = parseSection(content, "Viral Hooks", 10);
+    const titles = parseSection(content, "YouTube Titles", 10);
+    const introScripts = parseSection(content, "Intro Scripts", 5);
+
+    if (hooks.length === 0 && titles.length === 0) {
+      const fallback = getPlaceholder(topic, platform);
+      res.json({ ...fallback, platform, topic, contentAngle });
       return;
     }
 
-    // Pad or trim to exactly 5 categories with 3 hooks each
-    const filled = CATEGORY_NAMES.map((name, i) => ({
-      name,
-      hooks: (categories[i]?.hooks ?? []).slice(0, 3),
-    }));
-
-    const hooks = filled.flatMap((c) => c.hooks);
-    res.json({ hooks, categories: filled, platform, topic });
+    // Pad with fallback if AI returned fewer items than expected
+    const fallback = getPlaceholder(topic, platform);
+    res.json({
+      hooks: hooks.length >= 5 ? hooks : fallback.hooks,
+      titles: titles.length >= 5 ? titles : fallback.titles,
+      introScripts: introScripts.length >= 3 ? introScripts : fallback.introScripts,
+      platform,
+      topic,
+      contentAngle,
+    });
   } catch (err) {
     console.error("OpenAI error, falling back to placeholders:", err);
-    const fallback = getPlaceholderCategories(topic, platform);
-    const hooks = fallback.flatMap((c) => c.hooks);
-    res.json({ hooks, categories: fallback, platform, topic });
+    const fallback = getPlaceholder(topic, platform);
+    res.json({ ...fallback, platform, topic, contentAngle });
+  }
+});
+
+router.post("/hooks/remix", async (req, res) => {
+  const parseResult = RemixHookBody.safeParse(req.body);
+  if (!parseResult.success) {
+    res.status(400).json({ error: "Invalid request body" });
+    return;
+  }
+
+  const { hook, topic, platform, contentAngle } = parseResult.data;
+
+  try {
+    const prompt = `You are remixing a viral hook for a ${platform} video.
+
+Original hook: "${hook}"
+Topic: ${topic}
+Content angle: ${contentAngle}
+
+Write 10 new variations of this hook. Keep the same core idea but improve clarity, punchiness, and natural phrasing. Each variation should have a completely different structure.
+
+Rules:
+- 6 to 12 words per hook
+- Natural spoken English, read it aloud before including it
+- No quotation marks
+- No numbering, bullets, or labels  
+- No two variations start with the same word
+- Return only the 10 hooks, one per line, nothing else`;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-5.2",
+      max_completion_tokens: 512,
+      messages: [
+        { role: "system", content: `You write viral hooks for ${platform}. Every hook reads like natural, fluent English a real creator would publish.` },
+        { role: "user", content: prompt },
+      ],
+    });
+
+    const content = response.choices[0]?.message?.content ?? "";
+    const variations = content
+      .split("\n")
+      .map((l) => l.trim().replace(/^[-*\d.]+\s*/, ""))
+      .filter((l) => l.length > 0)
+      .slice(0, 10);
+
+    res.json({ variations: variations.length > 0 ? variations : [hook] });
+  } catch (err) {
+    console.error("Remix error:", err);
+    res.json({ variations: [hook] });
   }
 });
 

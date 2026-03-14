@@ -21,25 +21,76 @@ export const GenerateHooksRequestPlatform = {
   Instagram: "Instagram",
 } as const;
 
+/**
+ * The content angle or style
+ */
+export type GenerateHooksRequestContentAngle =
+  (typeof GenerateHooksRequestContentAngle)[keyof typeof GenerateHooksRequestContentAngle];
+
+export const GenerateHooksRequestContentAngle = {
+  Educational: "Educational",
+  Storytelling: "Storytelling",
+  Controversial: "Controversial",
+  Review: "Review",
+  Comparison: "Comparison",
+  Listicle: "Listicle",
+  Inspirational: "Inspirational",
+} as const;
+
 export interface GenerateHooksRequest {
   /** The video topic or idea */
   topic: string;
   /** The target platform */
   platform: GenerateHooksRequestPlatform;
-}
-
-export interface HookCategory {
-  name: string;
-  hooks: string[];
+  /** The content angle or style */
+  contentAngle: GenerateHooksRequestContentAngle;
 }
 
 export interface GenerateHooksResponse {
-  /** Flat list of all 15 generated hooks */
+  /** 10 viral hooks */
   hooks: string[];
-  /** Hooks grouped by category */
-  categories: HookCategory[];
+  /** 10 clickable titles */
+  titles: string[];
+  /** 5 intro script openers */
+  introScripts: string[];
   platform: string;
   topic: string;
+  contentAngle: string;
+}
+
+export type RemixHookRequestPlatform =
+  (typeof RemixHookRequestPlatform)[keyof typeof RemixHookRequestPlatform];
+
+export const RemixHookRequestPlatform = {
+  YouTube: "YouTube",
+  TikTok: "TikTok",
+  Instagram: "Instagram",
+} as const;
+
+export type RemixHookRequestContentAngle =
+  (typeof RemixHookRequestContentAngle)[keyof typeof RemixHookRequestContentAngle];
+
+export const RemixHookRequestContentAngle = {
+  Educational: "Educational",
+  Storytelling: "Storytelling",
+  Controversial: "Controversial",
+  Review: "Review",
+  Comparison: "Comparison",
+  Listicle: "Listicle",
+  Inspirational: "Inspirational",
+} as const;
+
+export interface RemixHookRequest {
+  /** The hook to remix */
+  hook: string;
+  topic: string;
+  platform: RemixHookRequestPlatform;
+  contentAngle: RemixHookRequestContentAngle;
+}
+
+export interface RemixHookResponse {
+  /** 10 remixed variations of the original hook */
+  variations: string[];
 }
 
 export interface JoinWaitlistRequest {

@@ -6,7 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface HookCategory {
-  name: string;
-  hooks: string[];
+export interface RemixHookResponse {
+  /** 10 remixed variations of the original hook */
+  variations: string[];
 }

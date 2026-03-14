@@ -1,0 +1,99 @@
+Update this app into a polished Phase 1 product for YouTube creators.
+
+Make the following changes:
+
+1. Remove all daily usage limits.
+2. Remove the email waitlist prompt completely.
+3. Keep the app fully free to use for now.
+
+4. Update the hero section to:
+Headline:
+Generate Viral YouTube Hooks, Titles & Intro Scripts
+
+Subheadline:
+Turn any video idea into scroll-stopping hooks, clickable titles, and engaging opening lines in seconds.
+
+Supporting line:
+Perfect for YouTubers, faceless channels, educators, reviewers, and marketers.
+
+5. Keep the platform selector, but default it to YouTube.
+
+6. Add a new dropdown field called "Content Angle" with these options:
+- Educational
+- Storytelling
+- Controversial
+- Review
+- Comparison
+- Listicle
+- Inspirational
+
+Default the content angle to Review.
+
+7. When generating results, use the selected topic, platform, and content angle to tailor the output.
+
+8. Return results in 3 clearly labeled sections:
+Section 1: Viral Hooks
+- generate 10 hooks
+- short, punchy, curiosity-driven
+- natural English
+- no quotation marks
+
+Section 2: YouTube Titles
+- generate 10 clickable YouTube titles
+- title case format
+- strong curiosity and clarity
+- natural English
+- no quotation marks
+
+Section 3: Intro Script Ideas
+- generate 5 opening lines or short intro scripts
+- 1 to 3 sentences each
+- engaging, natural, and conversational
+- suitable for the selected platform and content angle
+
+9. Improve the generation prompt so hooks and titles always read like natural English headlines.
+Rules:
+- no awkward grammar
+- no quotation marks
+- varied phrasing
+- platform-aware
+- angle-aware
+
+10. Keep individual copy buttons for each item.
+11. Add:
+- Copy All Hooks
+- Copy All Titles
+- Copy All Intros
+
+12. Add a "Copy as YouTube Titles" button that formats all generated titles in clean Title Case, one per line.
+
+13. Add a "Remix This Hook" button next to each generated hook.
+When clicked, generate 10 new variations based on that hook.
+Requirements:
+- keep the same core idea
+- improve clarity and punchiness
+- short natural English
+- no quotation marks
+Display the remixed hooks below the selected hook under:
+More variations for this hook
+
+14. Redesign the UI to feel like a creator workspace instead of a basic generator.
+Use:
+- dark modern interface
+- purple/indigo accent colors
+- centered idea input area at the top
+- three visually distinct result cards:
+  Hooks 🎣
+  Titles 📝
+  Intro Scripts 🎬
+- each result item should look clean and polished
+- mobile friendly layout
+- subtle loading feedback while generating
+
+15. Update the topic input placeholder to:
+Example: Porsche Cayenne Turbo review, kids learning colors, real estate investing tips, or how to grow on YouTube.
+
+16. Add a small trust line under the headline:
+Used by creators to generate scroll-stopping YouTube hooks in seconds.
+
+Keep the app clean, modern, and visually polished.

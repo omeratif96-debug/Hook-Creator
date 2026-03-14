@@ -1,69 +1,58 @@
 import { useState } from "react";
 import { useGenerateHooks } from "@workspace/api-client-react";
-import type { GenerateHooksRequestPlatform, HookCategory } from "@workspace/api-client-react";
+import type { GenerateHooksRequestPlatform, GenerateHooksRequestContentAngle } from "@workspace/api-client-react";
 import { useToast } from "@/hooks/use-toast";
 
-const PLACEHOLDER_CATEGORIES: HookCategory[] = [
-  { name: "Curiosity Hooks", hooks: [
-    "The secret to this nobody is willing to say out loud",
-    "What actually happens after one year of doing this",
-    "Why everything you know about this is backwards",
-  ]},
-  { name: "Contrarian Hooks", hooks: [
-    "Stop wasting money on this — here is why",
-    "Every expert got this one thing completely wrong",
-    "The popular advice that quietly ruined my results",
-  ]},
-  { name: "Benefit Hooks", hooks: [
-    "Master this skill in a weekend with one method",
-    "One change that doubled my results overnight",
-    "Save hours every week by doing this differently",
-  ]},
-  { name: "Story Hooks", hooks: [
-    "By the time I figured this out I had lost thousands",
-    "My first month doing this almost broke me",
-    "I was embarrassed until this one thing happened",
-  ]},
-  { name: "Bold Statement Hooks", hooks: [
-    "This is the single best skill you can build right now",
-    "Nothing changed my life faster than learning this",
-    "Most people will never get good at this — here is why",
-  ]},
+export type ContentAngle = GenerateHooksRequestContentAngle;
+export type Platform = GenerateHooksRequestPlatform;
+
+const FALLBACK_HOOKS = [
+  "Nobody told me this before I tried it for 30 days",
+  "I spent $10,000 on this so you don't have to",
 ];
+const FALLBACK_TITLES = ["I Tested Every Method — Here's What Worked"];
+const FALLBACK_INTROS = ["Before I show you the results, let me be completely honest with you."];
 
 export function useViralHooks() {
   const { toast } = useToast();
-  const [categories, setCategories] = useState<HookCategory[]>([]);
-  const [platform, setPlatform] = useState<GenerateHooksRequestPlatform>("TikTok");
-
-  const hooks = categories.flatMap((c) => c.hooks);
+  const [hooks, setHooks] = useState<string[]>([]);
+  const [titles, setTitles] = useState<string[]>([]);
+  const [introScripts, setIntroScripts] = useState<string[]>([]);
+  const [platform, setPlatform] = useState<Platform>("YouTube");
+  const [contentAngle, setContentAngle] = useState<ContentAngle>("Review");
 
   const mutation = useGenerateHooks({
     mutation: {
       onSuccess: (data) => {
-        setCategories(data.categories ?? []);
+        setHooks(data.hooks ?? FALLBACK_HOOKS);
+        setTitles(data.titles ?? FALLBACK_TITLES);
+        setIntroScripts(data.introScripts ?? FALLBACK_INTROS);
         toast({
-          title: "Hooks generated!",
-          description: `15 ${data.platform} hooks across 5 categories.`,
+          title: "Content generated!",
+          description: `10 hooks, 10 titles, and 5 intros ready.`,
         });
       },
-      onError: (error) => {
-        console.warn("API failed, using placeholders", error);
+      onError: () => {
         toast({
-          title: "Using sample hooks",
-          description: "Couldn't reach the API. Showing sample hooks instead.",
+          title: "Generation failed",
+          description: "Something went wrong. Please try again.",
           variant: "destructive",
         });
-        setCategories(PLACEHOLDER_CATEGORIES);
       },
     },
   });
 
+  const hasResults = hooks.length > 0 || titles.length > 0 || introScripts.length > 0;
+
   return {
     ...mutation,
     hooks,
-    categories,
+    titles,
+    introScripts,
+    hasResults,
     platform,
     setPlatform,
+    contentAngle,
+    setContentAngle,
   };
 }

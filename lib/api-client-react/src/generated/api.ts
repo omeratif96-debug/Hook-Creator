@@ -23,6 +23,8 @@ import type {
   HealthStatus,
   JoinWaitlistRequest,
   JoinWaitlistResponse,
+  RemixHookRequest,
+  RemixHookResponse,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -111,8 +113,8 @@ export function useHealthCheck<
 }
 
 /**
- * Generate 15 viral hooks for a given topic and platform
- * @summary Generate viral hooks
+ * Generate content for a given topic, platform, and content angle
+ * @summary Generate viral hooks, titles, and intro scripts
  */
 export const getGenerateHooksUrl = () => {
   return `/api/hooks/generate`;
@@ -175,7 +177,7 @@ export type GenerateHooksMutationBody = BodyType<GenerateHooksRequest>;
 export type GenerateHooksMutationError = ErrorType<ErrorResponse>;
 
 /**
- * @summary Generate viral hooks
+ * @summary Generate viral hooks, titles, and intro scripts
  */
 export const useGenerateHooks = <
   TError = ErrorType<ErrorResponse>,
@@ -195,6 +197,93 @@ export const useGenerateHooks = <
   TContext
 > => {
   return useMutation(getGenerateHooksMutationOptions(options));
+};
+
+/**
+ * Generate 10 variations of a given hook
+ * @summary Remix a single hook into variations
+ */
+export const getRemixHookUrl = () => {
+  return `/api/hooks/remix`;
+};
+
+export const remixHook = async (
+  remixHookRequest: RemixHookRequest,
+  options?: RequestInit,
+): Promise<RemixHookResponse> => {
+  return customFetch<RemixHookResponse>(getRemixHookUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(remixHookRequest),
+  });
+};
+
+export const getRemixHookMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof remixHook>>,
+    TError,
+    { data: BodyType<RemixHookRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof remixHook>>,
+  TError,
+  { data: BodyType<RemixHookRequest> },
+  TContext
+> => {
+  const mutationKey = ["remixHook"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof remixHook>>,
+    { data: BodyType<RemixHookRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return remixHook(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RemixHookMutationResult = NonNullable<
+  Awaited<ReturnType<typeof remixHook>>
+>;
+export type RemixHookMutationBody = BodyType<RemixHookRequest>;
+export type RemixHookMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Remix a single hook into variations
+ */
+export const useRemixHook = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof remixHook>>,
+    TError,
+    { data: BodyType<RemixHookRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof remixHook>>,
+  TError,
+  { data: BodyType<RemixHookRequest> },
+  TContext
+> => {
+  return useMutation(getRemixHookMutationOptions(options));
 };
 
 /**

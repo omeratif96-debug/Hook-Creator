@@ -32,8 +32,8 @@ paths:
     post:
       operationId: generateHooks
       tags: [hooks]
-      summary: Generate viral hooks
-      description: Generate 15 viral hooks for a given topic and platform
+      summary: Generate viral hooks, titles, and intro scripts
+      description: Generate content for a given topic, platform, and content angle
       requestBody:
         required: true
         content:
@@ -42,11 +42,42 @@ paths:
               $ref: "#/components/schemas/GenerateHooksRequest"
       responses:
         "200":
-          description: Successfully generated hooks
+          description: Successfully generated content
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenerateHooksResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /hooks/remix:
+    post:
+      operationId: remixHook
+      tags: [hooks]
+      summary: Remix a single hook into variations
+      description: Generate 10 variations of a given hook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemixHookRequest"
+      responses:
+        "200":
+          description: Successfully generated variations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RemixHookResponse"
         "400":
           description: Bad request
           content:
@@ -115,21 +146,14 @@ components:
           type: string
           enum: [YouTube, TikTok, Instagram]
           description: The target platform
+        contentAngle:
+          type: string
+          enum: [Educational, Storytelling, Controversial, Review, Comparison, Listicle, Inspirational]
+          description: The content angle or style
       required:
         - topic
         - platform
-    HookCategory:
-      type: object
-      properties:
-        name:
-          type: string
-        hooks:
-          type: array
-          items:
-            type: string
-      required:
-        - name
-        - hooks
+        - contentAngle
     GenerateHooksResponse:
       type: object
       properties:
@@ -137,21 +161,59 @@ components:
           type: array
           items:
             type: string
-          description: Flat list of all 15 generated hooks
-        categories:
+          description: 10 viral hooks
+        titles:
           type: array
           items:
-            $ref: "#/components/schemas/HookCategory"
-          description: Hooks grouped by category
+            type: string
+          description: 10 clickable titles
+        introScripts:
+          type: array
+          items:
+            type: string
+          description: 5 intro script openers
         platform:
           type: string
         topic:
           type: string
+        contentAngle:
+          type: string
       required:
         - hooks
-        - categories
+        - titles
+        - introScripts
         - platform
         - topic
+        - contentAngle
+    RemixHookRequest:
+      type: object
+      properties:
+        hook:
+          type: string
+          description: The hook to remix
+        topic:
+          type: string
+        platform:
+          type: string
+          enum: [YouTube, TikTok, Instagram]
+        contentAngle:
+          type: string
+          enum: [Educational, Storytelling, Controversial, Review, Comparison, Listicle, Inspirational]
+      required:
+        - hook
+        - topic
+        - platform
+        - contentAngle
+    RemixHookResponse:
+      type: object
+      properties:
+        variations:
+          type: array
+          items:
+            type: string
+          description: 10 remixed variations of the original hook
+      required:
+        - variations
     JoinWaitlistRequest:
       type: object
       properties:
