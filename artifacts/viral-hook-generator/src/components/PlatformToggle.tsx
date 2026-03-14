@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils";
 import type { GenerateHooksRequestPlatform } from "@workspace/api-client-react";
 
 const platforms = [
+  { id: "YouTube", icon: Youtube, color: "group-hover:text-[#FF0000]" },
   { id: "TikTok", icon: Music2, color: "group-hover:text-[#00f2fe]" },
   { id: "Instagram", icon: Instagram, color: "group-hover:text-[#E1306C]" },
-  { id: "YouTube", icon: Youtube, color: "group-hover:text-[#FF0000]" },
 ] as const;
 
 interface PlatformToggleProps {
