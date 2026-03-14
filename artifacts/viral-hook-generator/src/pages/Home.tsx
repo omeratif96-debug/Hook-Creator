@@ -19,6 +19,19 @@ const CONTENT_ANGLES: { value: ContentAngle; label: string }[] = [
   { value: "Inspirational", label: "Inspirational" },
 ];
 
+const CREATOR_TIPS = [
+  "Hooks that open an information gap — 'What nobody tells you about…' — consistently drive higher click-through rates.",
+  "Short titles with strong action verbs outperform long descriptive ones. Aim for 6–8 words.",
+  "Opening your video with a question pulls viewers in immediately and signals the answer is coming.",
+  "The best hooks make the viewer feel like they are already missing something important.",
+  "Titles that use numbers ('5 reasons', '3 mistakes') set a clear expectation and reduce drop-off.",
+  "Your first 5 seconds determine if someone stays. Lead with the payoff, not the setup.",
+  "Curiosity-gap hooks work best when the gap is specific, not vague. 'This one setting' beats 'something surprising'.",
+  "Repeating your video's core promise in both the title and the first sentence reinforces why viewers should stay.",
+  "Contrarian titles ('Stop doing X') get attention because they challenge what the viewer already believes.",
+  "The most-clicked YouTube titles are often written in second person — they speak directly to 'you'.",
+];
+
 const LOADING_MESSAGES = [
   "Analyzing your topic…",
   "Crafting viral hooks…",
@@ -136,6 +149,13 @@ export default function Home() {
 
   const [remixMap, setRemixMap] = useState<Map<string, string[]>>(new Map());
   const [remixingSet, setRemixingSet] = useState<Set<string>>(new Set());
+
+  const [tipIndex, setTipIndex] = useState(0);
+  useEffect(() => {
+    if (hooks.length > 0) {
+      setTipIndex(Math.floor(Math.random() * CREATOR_TIPS.length));
+    }
+  }, [hooks]);
 
   const handleRemix = async (hook: string) => {
     setRemixingSet((prev) => new Set([...prev, hook]));
@@ -422,6 +442,32 @@ export default function Home() {
                     ))}
                   </motion.div>
                 </SectionCard>
+              </motion.div>
+
+              {/* Creator Tip */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
+              >
+                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 px-5 py-4 flex gap-3 items-start">
+                  <span className="text-amber-400 text-base leading-none mt-0.5 shrink-0">💡</span>
+                  <div>
+                    <p className="text-xs font-semibold text-amber-400/80 uppercase tracking-widest mb-1">Creator Tip</p>
+                    <AnimatePresence mode="wait">
+                      <motion.p
+                        key={tipIndex}
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="text-sm text-white/55 leading-relaxed"
+                      >
+                        {CREATOR_TIPS[tipIndex]}
+                      </motion.p>
+                    </AnimatePresence>
+                  </div>
+                </div>
               </motion.div>
 
             </motion.div>
