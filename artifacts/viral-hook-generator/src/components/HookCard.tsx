@@ -3,15 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Check, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface HookCardProps {
-  index: number;
-  text: string;
-  onRemix?: () => void;
-  isRemixing?: boolean;
-  remixVariations?: string[];
-}
-
-function SmallCopyButton({ text }: { text: string }) {
+function SmallCopyButton({ text, className }: { text: string; className?: string }) {
   const [copied, setCopied] = useState(false);
   const handle = () => {
     navigator.clipboard.writeText(text);
@@ -21,66 +13,75 @@ function SmallCopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handle}
+      title="Copy"
       className={cn(
-        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200",
+        "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 active:scale-95",
         copied
-          ? "bg-green-500/20 text-green-400"
-          : "bg-white/5 text-muted-foreground hover:bg-primary/20 hover:text-primary"
+          ? "bg-green-500/15 text-green-400"
+          : "bg-white/5 text-white/40 hover:bg-primary/15 hover:text-primary border border-white/8",
+        className
       )}
     >
-      {copied ? <Check size={12} /> : <Copy size={12} />}
+      {copied ? <Check size={11} /> : <Copy size={11} />}
       {copied ? "Copied" : "Copy"}
     </button>
   );
 }
 
+interface HookCardProps {
+  index: number;
+  text: string;
+  onRemix?: () => void;
+  isRemixing?: boolean;
+  remixVariations?: string[];
+}
+
 export function HookCard({ index, text, onRemix, isRemixing, remixVariations = [] }: HookCardProps) {
   const [showVariations, setShowVariations] = useState(false);
+  const hasVariations = remixVariations.length > 0;
 
   const handleRemix = () => {
     onRemix?.();
     setShowVariations(true);
   };
 
-  const hasVariations = remixVariations.length > 0;
-
   return (
     <motion.div
-      variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } }}
-      className="group relative bg-card border border-border hover:border-primary/40 rounded-xl p-5 transition-all duration-200 hover:shadow-lg hover:shadow-primary/5"
+      variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
+      className="group relative flex flex-col rounded-xl border border-white/8 bg-white/[0.03] hover:border-primary/30 hover:bg-primary/[0.04] transition-all duration-200"
     >
-      <div className="flex items-start justify-between gap-3 mb-4">
-        <span className="flex-shrink-0 w-6 h-6 rounded-md bg-primary/15 text-primary text-xs font-bold flex items-center justify-center">
+      <div className="flex items-start gap-3 p-4">
+        <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center">
           {index}
         </span>
-        <p className="flex-1 text-foreground font-medium leading-relaxed text-sm">
+        <p className="flex-1 text-sm text-white/80 leading-relaxed font-medium">
           {text}
         </p>
       </div>
 
-      <div className="flex items-center gap-2 justify-end">
+      <div className="flex items-center gap-2 px-4 pb-3 pt-0 border-t border-white/5 mt-auto">
         <SmallCopyButton text={text} />
         {onRemix && (
           <button
             onClick={handleRemix}
             disabled={isRemixing}
             className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200",
+              "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 active:scale-95 border",
               isRemixing
-                ? "bg-primary/10 text-primary/50 cursor-not-allowed"
-                : "bg-white/5 text-muted-foreground hover:bg-indigo-500/20 hover:text-indigo-400"
+                ? "bg-white/5 text-white/25 border-white/5 cursor-not-allowed"
+                : "bg-white/5 text-white/40 border-white/8 hover:bg-indigo-500/15 hover:text-indigo-400 hover:border-indigo-500/20"
             )}
           >
-            <RefreshCw size={12} className={isRemixing ? "animate-spin" : ""} />
+            <RefreshCw size={11} className={isRemixing ? "animate-spin" : ""} />
             {isRemixing ? "Remixing…" : "Remix"}
           </button>
         )}
         {hasVariations && (
           <button
             onClick={() => setShowVariations((v) => !v)}
-            className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="ml-auto flex items-center gap-1 text-xs text-white/30 hover:text-white/60 transition-colors"
           >
-            {showVariations ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+            {showVariations ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
             {remixVariations.length} variations
           </button>
         )}
@@ -94,14 +95,14 @@ export function HookCard({ index, text, onRemix, isRemixing, remixVariations = [
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="mt-4 pt-4 border-t border-border/60 space-y-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                More variations for this hook
+            <div className="px-4 pb-4 border-t border-white/6 pt-3 space-y-2">
+              <p className="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-2.5">
+                Variations
               </p>
               {remixVariations.map((v, i) => (
-                <div key={i} className="flex items-start gap-2 group/var">
-                  <span className="text-xs text-muted-foreground/50 font-mono mt-0.5 w-4 flex-shrink-0">{i + 1}</span>
-                  <p className="text-sm text-foreground/80 flex-1 leading-relaxed">{v}</p>
+                <div key={i} className="flex items-start gap-2.5 group/var">
+                  <span className="text-[10px] text-white/20 font-mono mt-1 w-3 flex-shrink-0">{i + 1}</span>
+                  <p className="text-xs text-white/60 flex-1 leading-relaxed">{v}</p>
                   <SmallCopyButton text={v} />
                 </div>
               ))}
@@ -116,19 +117,19 @@ export function HookCard({ index, text, onRemix, isRemixing, remixVariations = [
 export function TextCard({ index, text }: { index: number; text: string }) {
   return (
     <motion.div
-      variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } }}
-      className="group relative bg-card border border-border hover:border-primary/40 rounded-xl p-5 transition-all duration-200 hover:shadow-lg hover:shadow-primary/5"
+      variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
+      className="group flex flex-col rounded-xl border border-white/8 bg-white/[0.03] hover:border-indigo-500/30 hover:bg-indigo-500/[0.04] transition-all duration-200"
     >
-      <div className="flex items-start justify-between gap-3 mb-4">
-        <span className="flex-shrink-0 w-6 h-6 rounded-md bg-primary/15 text-primary text-xs font-bold flex items-center justify-center">
+      <div className="flex items-start gap-3 p-4">
+        <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-indigo-500/20 text-indigo-400 text-[10px] font-bold flex items-center justify-center">
           {index}
         </span>
-        <p className="flex-1 text-foreground font-medium leading-relaxed text-sm">
+        <p className="flex-1 text-sm text-white/80 leading-relaxed font-medium">
           {text}
         </p>
       </div>
-      <div className="flex justify-end">
-        <SmallCopyButton text={text} />
+      <div className="px-4 pb-3 border-t border-white/5 mt-auto">
+        <SmallCopyButton text={text} className="mt-2" />
       </div>
     </motion.div>
   );
@@ -137,19 +138,19 @@ export function TextCard({ index, text }: { index: number; text: string }) {
 export function IntroCard({ index, text }: { index: number; text: string }) {
   return (
     <motion.div
-      variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } }}
-      className="group relative bg-card border border-border hover:border-primary/40 rounded-xl p-5 transition-all duration-200 hover:shadow-lg hover:shadow-primary/5"
+      variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
+      className="group flex flex-col rounded-xl border border-white/8 bg-white/[0.03] hover:border-fuchsia-500/30 hover:bg-fuchsia-500/[0.03] transition-all duration-200"
     >
-      <div className="flex items-start gap-3 mb-4">
-        <span className="flex-shrink-0 w-6 h-6 rounded-md bg-indigo-500/15 text-indigo-400 text-xs font-bold flex items-center justify-center">
+      <div className="flex items-start gap-3 p-4">
+        <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-400 text-[10px] font-bold flex items-center justify-center">
           {index}
         </span>
-        <p className="flex-1 text-foreground/90 leading-relaxed text-sm">
+        <p className="flex-1 text-sm text-white/75 leading-relaxed">
           {text}
         </p>
       </div>
-      <div className="flex justify-end">
-        <SmallCopyButton text={text} />
+      <div className="px-4 pb-3 border-t border-white/5 mt-auto">
+        <SmallCopyButton text={text} className="mt-2" />
       </div>
     </motion.div>
   );
