@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Clipboard, Loader2, Play, Check } from "lucide-react";
 import { PlatformToggle } from "@/components/PlatformToggle";
@@ -18,6 +18,56 @@ const CONTENT_ANGLES: { value: ContentAngle; label: string }[] = [
   { value: "Listicle", label: "Listicle" },
   { value: "Inspirational", label: "Inspirational" },
 ];
+
+const LOADING_MESSAGES = [
+  "Analyzing your topic…",
+  "Crafting viral hooks…",
+  "Writing clickable titles…",
+  "Generating intro ideas…",
+];
+
+function LoadingMessages() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % LOADING_MESSAGES.length);
+    }, 1800);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center gap-4 py-8">
+      {/* Animated dots */}
+      <div className="flex items-center gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            className="w-1.5 h-1.5 rounded-full bg-primary/60"
+            animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.1, 0.8] }}
+            transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2, ease: "easeInOut" }}
+          />
+        ))}
+      </div>
+
+      {/* Rotating message */}
+      <div className="h-5 relative overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={index}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="text-sm text-white/40 font-medium tracking-wide absolute inset-0 text-center whitespace-nowrap"
+          >
+            {LOADING_MESSAGES[index]}
+          </motion.p>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
 
 function CopyAllButton({
   label,
@@ -387,6 +437,7 @@ export default function Home() {
               exit={{ opacity: 0 }}
               className="mt-10 space-y-5"
             >
+              <LoadingMessages />
               {[
                 { accent: "bg-gradient-to-r from-violet-500 to-transparent", rows: 4 },
                 { accent: "bg-gradient-to-r from-indigo-500 to-transparent", rows: 4 },
