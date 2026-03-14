@@ -184,7 +184,7 @@ Output exactly in this format — each ## header is required:
 [10 clickable titles, one per line, Title Case, strong curiosity and clarity, no quotation marks]
 
 ## Intro Scripts
-[5 opening lines or short intro scripts, one per line, 1-3 sentences each, conversational and engaging, no quotation marks]
+[5 spoken video openers, one per line, maximum 2 sentences each, strong hook in the first sentence, conversational and natural — exactly how a creator would say it aloud in the first 5 seconds of a video, no quotation marks]
 
 Rules for all output:
 - Natural spoken English only — each line must sound good read aloud
@@ -193,7 +193,8 @@ Rules for all output:
 - No two items start with the same word
 - Every item must be unique in angle and structure
 - Be platform-aware (${platform}) and angle-aware (${contentAngle})
-- Hooks and titles: no awkward grammar, no passive voice, no AI-sounding phrasing`;
+- Hooks and titles: no awkward grammar, no passive voice, no AI-sounding phrasing
+- Intro scripts: maximum 2 sentences, first sentence must immediately hook the viewer, write as if speaking directly into a camera — casual, direct, no filler words`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-5.2",
