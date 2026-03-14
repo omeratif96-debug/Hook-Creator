@@ -295,9 +295,9 @@ export default function Home() {
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-5">
                     <div>
                       <h2 className="text-base font-display font-bold text-white flex items-center gap-2">
-                        🎣 Viral Hooks
+                        Hooks 🎣
                       </h2>
-                      <p className="text-xs text-white/40 mt-0.5">Short, punchy, curiosity-driven — built to stop the scroll.</p>
+                      <p className="text-xs text-white/40 mt-0.5">Short, curiosity-driven hooks for your video.</p>
                     </div>
                     <CopyAllButton label="Copy All" text={hooks.join("\n\n")} />
                   </div>
@@ -327,9 +327,9 @@ export default function Home() {
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-5">
                     <div>
                       <h2 className="text-base font-display font-bold text-white flex items-center gap-2">
-                        📝 YouTube Titles
+                        YouTube Titles 📝
                       </h2>
-                      <p className="text-xs text-white/40 mt-0.5">Clickable, title-cased, built for high CTR.</p>
+                      <p className="text-xs text-white/40 mt-0.5">Clickable titles designed to improve click-through rate.</p>
                     </div>
                     <div className="flex gap-2 flex-wrap">
                       <CopyAllButton label="Copy All" text={titles.join("\n\n")} />
@@ -355,9 +355,9 @@ export default function Home() {
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-5">
                     <div>
                       <h2 className="text-base font-display font-bold text-white flex items-center gap-2">
-                        🎬 Intro Script Ideas
+                        Intro Scripts 🎬
                       </h2>
-                      <p className="text-xs text-white/40 mt-0.5">Opening lines that hook your viewer in the first 5 seconds.</p>
+                      <p className="text-xs text-white/40 mt-0.5">Opening lines that hook the viewer in the first 5 seconds.</p>
                     </div>
                     <CopyAllButton label="Copy All" text={introScripts.join("\n\n")} />
                   </div>
