@@ -230,38 +230,39 @@ export default function Home() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.07 }}
-            className="text-4xl sm:text-5xl lg:text-[3.5rem] font-display font-extrabold text-white mb-4 leading-[1.15] tracking-tight"
+            className="text-5xl sm:text-6xl lg:text-7xl font-display font-extrabold text-white mb-3 leading-[1.1] tracking-tight"
           >
-            Generate Viral YouTube{" "}
+            Hook
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400">
-              Hooks, Titles & Intro Scripts
+              Lab
             </span>
           </motion.h1>
 
           <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.12 }}
+            className="text-lg sm:text-xl text-white/60 font-medium mb-4 tracking-tight"
+          >
+            AI Hooks, Titles &amp; Intros for YouTube Creators
+          </motion.p>
+
+          <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.14 }}
-            className="text-base sm:text-lg text-white/50 leading-relaxed mb-3"
+            transition={{ duration: 0.45, delay: 0.18 }}
+            className="text-sm sm:text-base text-white/40 leading-relaxed mb-3"
           >
-            Turn any video idea into scroll-stopping hooks, clickable titles, and engaging opening lines in seconds.
+            Turn one video idea into viral hooks, clickable titles, and engaging intros in seconds.
           </motion.p>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.22 }}
-            className="text-xs text-white/30 tracking-wide"
+            transition={{ duration: 0.4, delay: 0.25 }}
+            className="text-xs text-white/25 tracking-wide"
           >
-            Perfect for YouTubers, faceless channels, educators, reviewers, and marketers.
-          </motion.p>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.28 }}
-            className="text-xs text-primary/40 tracking-wide mt-1.5"
-          >
-            Used by creators to generate scroll-stopping hooks in seconds.
+            Built for creators who want better ideas before they hit record.
           </motion.p>
         </div>
 
