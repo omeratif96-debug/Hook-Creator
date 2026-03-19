@@ -244,7 +244,7 @@ export default function Home() {
             transition={{ duration: 0.45, delay: 0.12 }}
             className="text-lg sm:text-xl text-white/60 font-medium mb-4 tracking-tight"
           >
-            AI Hooks, Titles &amp; Intros for YouTube Creators
+            Get viral hooks and ideas for your product in seconds
           </motion.p>
 
           <motion.p
@@ -253,7 +253,7 @@ export default function Home() {
             transition={{ duration: 0.45, delay: 0.18 }}
             className="text-sm sm:text-base text-white/40 leading-relaxed mb-3"
           >
-            Turn one video idea into viral hooks, clickable titles, and engaging intros in seconds.
+            Turn one idea into attention-grabbing hooks, titles, and angles to grow faster.
           </motion.p>
 
           <motion.p
@@ -262,7 +262,7 @@ export default function Home() {
             transition={{ duration: 0.4, delay: 0.25 }}
             className="text-xs text-white/25 tracking-wide"
           >
-            Built for creators who want better ideas before they hit record.
+            Built for founders who want more attention and better ideas.
           </motion.p>
         </div>
 
@@ -278,13 +278,13 @@ export default function Home() {
             {/* Topic */}
             <div>
               <label htmlFor="topic" className="block text-sm font-medium text-white/60 mb-2">
-                What's your video about?
+                What are you trying to grow?
               </label>
               <textarea
                 id="topic"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                placeholder="Example: Porsche Cayenne Turbo review, kids learning colors, real estate investing tips, or how to grow on YouTube."
+                placeholder="Example: landing page for my SaaS, AI tool for creators, newsletter for startup founders, real estate lead generation, or how to get more users"
                 rows={3}
                 className="w-full px-4 py-3 text-sm text-white rounded-xl bg-white/4 border border-white/10 focus:border-primary/60 focus:ring-2 focus:ring-primary/15 outline-none transition-all resize-none placeholder:text-white/20 leading-relaxed"
               />
