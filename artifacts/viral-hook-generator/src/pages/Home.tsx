@@ -244,7 +244,7 @@ export default function Home() {
             transition={{ duration: 0.45, delay: 0.12 }}
             className="text-lg sm:text-xl text-white/60 font-medium mb-4 tracking-tight"
           >
-            Get viral hooks and ideas for your product in seconds
+            Get better hooks and ideas to grow your product — in seconds
           </motion.p>
 
           <motion.p
@@ -260,9 +260,9 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.25 }}
-            className="text-xs text-white/25 tracking-wide"
+            className="text-xs text-white/30 tracking-wide"
           >
-            Built for founders who want more attention and better ideas.
+            Used by founders to get better ideas and grow faster.
           </motion.p>
         </div>
 
@@ -293,7 +293,7 @@ export default function Home() {
             {/* Platform */}
             <div>
               <label className="block text-sm font-medium text-white/60 mb-2">
-                Platform
+                Use case
               </label>
               <PlatformToggle
                 value={platform}
@@ -336,12 +336,12 @@ export default function Home() {
                 {isPending ? (
                   <>
                     <Loader2 className="animate-spin" size={18} />
-                    Generating content…
+                    Generating hooks…
                   </>
                 ) : (
                   <>
                     <Play fill="currentColor" size={15} />
-                    Generate Content
+                    Generate Hooks
                   </>
                 )}
               </div>
