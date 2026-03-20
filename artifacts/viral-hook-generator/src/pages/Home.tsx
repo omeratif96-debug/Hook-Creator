@@ -147,14 +147,17 @@ export default function Home() {
     setContentAngle,
   } = useViralHooks();
   const resultsRef = useRef<HTMLDivElement>(null);
+  const feedbackRef = useRef<HTMLDivElement>(null);
 
   const [remixMap, setRemixMap] = useState<Map<string, string[]>>(new Map());
   const [remixingSet, setRemixingSet] = useState<Set<string>>(new Set());
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
   const [tipIndex, setTipIndex] = useState(0);
   useEffect(() => {
     if (hooks.length > 0) {
       setTipIndex(Math.floor(Math.random() * CREATOR_TIPS.length));
+      setFeedbackSubmitted(false);
     }
   }, [hooks]);
 
@@ -361,6 +364,15 @@ export default function Home() {
               className="mt-10 space-y-5"
             >
 
+              {/* Feedback — top of results */}
+              <FeedbackBox
+                key={hooks[0] ?? ""}
+                ref={feedbackRef}
+                topic={topic}
+                platform={platform}
+                onSubmitted={() => setFeedbackSubmitted(true)}
+              />
+
               {/* Hooks */}
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.04 }}>
                 <SectionCard accent="bg-gradient-to-r from-violet-500 via-purple-500 to-transparent">
@@ -472,9 +484,6 @@ export default function Home() {
                 </div>
               </motion.div>
 
-              {/* Feedback */}
-              <FeedbackBox key={hooks[0] ?? ""} topic={topic} platform={platform} />
-
             </motion.div>
           )}
         </AnimatePresence>
@@ -514,6 +523,30 @@ export default function Home() {
             </motion.div>
           )}
         </AnimatePresence>
+
+      {/* Sticky mobile feedback pill */}
+      <AnimatePresence>
+        {hasResults && !feedbackSubmitted && (
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 16 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="sm:hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50"
+          >
+            <button
+              type="button"
+              onClick={() =>
+                feedbackRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+              }
+              className="flex items-center gap-2 px-5 py-3 rounded-full bg-primary/90 text-white text-sm font-semibold shadow-lg shadow-primary/30 active:scale-95 transition-transform"
+            >
+              <span className="text-base leading-none">🎯</span>
+              Rate these hooks
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       </main>
     </div>

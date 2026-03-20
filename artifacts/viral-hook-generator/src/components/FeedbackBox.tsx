@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 
@@ -7,135 +7,141 @@ type Rating = "yes" | "a_little" | "no";
 interface FeedbackBoxProps {
   topic: string;
   platform: string;
+  onSubmitted?: () => void;
 }
 
-export function FeedbackBox({ topic, platform }: FeedbackBoxProps) {
-  const [rating, setRating] = useState<Rating | null>(null);
-  const [comment, setComment] = useState("");
-  const [favHook, setFavHook] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+export const FeedbackBox = forwardRef<HTMLDivElement, FeedbackBoxProps>(
+  function FeedbackBox({ topic, platform, onSubmitted }, ref) {
+    const [rating, setRating] = useState<Rating | null>(null);
+    const [detail, setDetail] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = async () => {
-    if (!rating) return;
-    setSubmitting(true);
-    try {
-      await fetch("/api/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          rating,
-          comment: comment.trim() || undefined,
-          favHook: favHook.trim() || undefined,
-          topic: topic || undefined,
-          platform: platform || undefined,
-        }),
-      });
-    } catch {
-    } finally {
-      setSubmitting(false);
-      setSubmitted(true);
-    }
-  };
+    const followUpPrompt =
+      rating === "yes"
+        ? "Nice — which hook did you like most?"
+        : "What felt off?";
 
-  const RATING_BUTTONS: { value: Rating; label: string }[] = [
-    { value: "yes", label: "Yes" },
-    { value: "a_little", label: "A little" },
-    { value: "no", label: "No" },
-  ];
+    const handleRate = (value: Rating) => {
+      setRating(value);
+      setDetail("");
+    };
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
-      className="rounded-xl border border-white/8 bg-white/[0.025] px-5 py-5"
-    >
-      <AnimatePresence mode="wait">
-        {submitted ? (
-          <motion.div
-            key="confirmed"
-            initial={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center gap-3 py-1"
-          >
-            <CheckCircle2 size={18} className="text-green-400 shrink-0" />
-            <p className="text-sm text-white/60">
-              Thanks — your feedback helps improve HookLab.
-            </p>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="form"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="space-y-4"
-          >
-            {/* Heading + rating buttons */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <p className="text-sm font-semibold text-white/70 shrink-0">
-                Was this useful?
-              </p>
-              <div className="flex gap-2">
-                {RATING_BUTTONS.map(({ value, label }) => (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setRating(value)}
-                    className={[
-                      "px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-all duration-150",
-                      rating === value
-                        ? "bg-primary/20 border-primary/50 text-primary"
-                        : "bg-white/5 border-white/10 text-white/50 hover:border-white/20 hover:text-white/70",
-                    ].join(" ")}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
+    const handleSubmit = async () => {
+      if (!rating) return;
+      setSubmitting(true);
+      try {
+        await fetch("/api/feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            rating,
+            comment: detail.trim() || undefined,
+            topic: topic || undefined,
+            platform: platform || undefined,
+          }),
+        });
+      } catch {
+      } finally {
+        setSubmitting(false);
+        setSubmitted(true);
+        onSubmitted?.();
+      }
+    };
 
-            {/* Optional inputs — only shown after a rating is picked */}
-            <AnimatePresence>
-              {rating && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="space-y-3 overflow-hidden"
-                >
-                  <textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="What felt good or bad?"
-                    rows={2}
-                    className="w-full px-3.5 py-2.5 text-sm text-white rounded-xl bg-white/4 border border-white/10 focus:border-primary/50 focus:ring-2 focus:ring-primary/10 outline-none transition-all resize-none placeholder:text-white/20 leading-relaxed"
-                  />
-                  <input
-                    type="text"
-                    value={favHook}
-                    onChange={(e) => setFavHook(e.target.value)}
-                    placeholder="Which hook did you like most?"
-                    className="w-full px-3.5 py-2.5 text-sm text-white rounded-xl bg-white/4 border border-white/10 focus:border-primary/50 focus:ring-2 focus:ring-primary/10 outline-none transition-all placeholder:text-white/20"
-                  />
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      onClick={handleSubmit}
-                      disabled={submitting}
-                      className="px-4 py-2 text-xs font-semibold rounded-lg bg-white/8 border border-white/12 text-white/70 hover:bg-white/12 hover:text-white transition-all disabled:opacity-40"
-                    >
-                      {submitting ? "Sending…" : "Send feedback"}
-                    </button>
+    const BUTTONS: { value: Rating; label: string }[] = [
+      { value: "yes", label: "Yes" },
+      { value: "a_little", label: "A bit" },
+      { value: "no", label: "No" },
+    ];
+
+    return (
+      <div ref={ref}>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08, duration: 0.4, ease: "easeOut" }}
+          className="rounded-2xl border border-primary/20 bg-primary/5 px-5 py-5"
+        >
+          <AnimatePresence mode="wait">
+            {submitted ? (
+              <motion.div
+                key="done"
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center gap-3 py-0.5"
+              >
+                <CheckCircle2 size={17} className="text-green-400 shrink-0" />
+                <p className="text-sm text-white/65">
+                  Thanks — this helps improve HookLab.
+                </p>
+              </motion.div>
+            ) : (
+              <motion.div key="form" exit={{ opacity: 0 }} className="space-y-4">
+                {/* Question + buttons */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                  <p className="text-sm font-semibold text-white/80 shrink-0">
+                    Did these hooks help?
+                  </p>
+                  <div className="flex gap-2">
+                    {BUTTONS.map(({ value, label }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => handleRate(value)}
+                        className={[
+                          "flex-1 sm:flex-none min-w-[68px] px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-150 active:scale-95",
+                          rating === value
+                            ? "bg-primary/25 border-primary/60 text-primary shadow-[0_0_12px_rgba(139,92,246,0.15)]"
+                            : "bg-white/6 border-white/12 text-white/55 hover:border-white/25 hover:text-white/80",
+                        ].join(" ")}
+                      >
+                        {label}
+                      </button>
+                    ))}
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
+                </div>
+
+                {/* Follow-up — expands after rating */}
+                <AnimatePresence>
+                  {rating && (
+                    <motion.div
+                      key={rating}
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.22, ease: "easeOut" }}
+                      className="overflow-hidden space-y-3"
+                    >
+                      <p className="text-xs text-white/45">{followUpPrompt}</p>
+                      <input
+                        type="text"
+                        value={detail}
+                        onChange={(e) => setDetail(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                        placeholder="Optional — skip to submit"
+                        autoFocus
+                        className="w-full px-3.5 py-2.5 text-sm text-white rounded-xl bg-white/5 border border-white/12 focus:border-primary/50 focus:ring-2 focus:ring-primary/10 outline-none transition-all placeholder:text-white/20"
+                      />
+                      <div className="flex justify-end">
+                        <button
+                          type="button"
+                          onClick={handleSubmit}
+                          disabled={submitting}
+                          className="px-5 py-2 text-xs font-semibold rounded-lg bg-primary/15 border border-primary/30 text-primary/80 hover:bg-primary/25 hover:text-primary transition-all disabled:opacity-40"
+                        >
+                          {submitting ? "Sending…" : "Submit"}
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </div>
+    );
+  }
+);
