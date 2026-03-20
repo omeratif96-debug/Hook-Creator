@@ -28,15 +28,141 @@ function SmallCopyButton({ text, className }: { text: string; className?: string
   );
 }
 
+type Reaction = "yes" | "a_little" | "no";
+
+const REACTIONS: { value: Reaction; emoji: string }[] = [
+  { value: "yes", emoji: "👍" },
+  { value: "a_little", emoji: "😐" },
+  { value: "no", emoji: "👎" },
+];
+
+interface HookReactionsProps {
+  hookText: string;
+  topic?: string;
+  platform?: string;
+}
+
+function HookReactions({ hookText, topic, platform }: HookReactionsProps) {
+  const [reaction, setReaction] = useState<Reaction | null>(null);
+  const [comment, setComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const followUp = reaction === "yes" ? "What made this good?" : "What felt off?";
+
+  const handleReact = (value: Reaction) => {
+    setReaction(value);
+    setComment("");
+  };
+
+  const handleSubmit = async () => {
+    if (!reaction) return;
+    setSubmitting(true);
+    try {
+      await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rating: reaction,
+          comment: comment.trim() || undefined,
+          favHook: hookText,
+          topic: topic || undefined,
+          platform: platform || undefined,
+        }),
+      });
+    } catch {
+    } finally {
+      setSubmitting(false);
+      setSubmitted(true);
+    }
+  };
+
+  if (submitted) {
+    return (
+      <span className="text-[11px] text-green-400/70 flex items-center gap-1">
+        <Check size={10} /> Thanks
+      </span>
+    );
+  }
+
+  return (
+    <div className="contents">
+      {/* Reaction buttons */}
+      <div className="flex items-center gap-0.5 ml-auto">
+        {REACTIONS.map(({ value, emoji }) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => handleReact(value)}
+            title={value === "yes" ? "Good" : value === "a_little" ? "Okay" : "Bad"}
+            className={cn(
+              "w-7 h-7 flex items-center justify-center rounded-lg text-sm transition-all duration-150 active:scale-90",
+              reaction === value
+                ? "bg-primary/20 scale-110"
+                : "opacity-40 hover:opacity-100 hover:bg-white/8"
+            )}
+          >
+            {emoji}
+          </button>
+        ))}
+      </div>
+
+      {/* Inline follow-up */}
+      <AnimatePresence>
+        {reaction && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="overflow-hidden col-span-full w-full"
+            style={{ gridColumn: "1 / -1" }}
+          >
+            <div className="pt-2.5 border-t border-white/6 flex gap-2">
+              <input
+                type="text"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                placeholder={followUp}
+                autoFocus
+                className="flex-1 min-w-0 px-2.5 py-1.5 text-xs text-white rounded-lg bg-white/5 border border-white/10 focus:border-primary/40 focus:ring-1 focus:ring-primary/10 outline-none transition-all placeholder:text-white/20"
+              />
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="shrink-0 px-3 py-1.5 text-xs font-semibold rounded-lg bg-primary/15 border border-primary/25 text-primary/80 hover:bg-primary/25 hover:text-primary transition-all disabled:opacity-40"
+              >
+                {submitting ? "…" : "Send"}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 interface HookCardProps {
   index: number;
   text: string;
   onRemix?: () => void;
   isRemixing?: boolean;
   remixVariations?: string[];
+  topic?: string;
+  platform?: string;
 }
 
-export function HookCard({ index, text, onRemix, isRemixing, remixVariations = [] }: HookCardProps) {
+export function HookCard({
+  index,
+  text,
+  onRemix,
+  isRemixing,
+  remixVariations = [],
+  topic,
+  platform,
+}: HookCardProps) {
   const [showVariations, setShowVariations] = useState(false);
   const hasVariations = remixVariations.length > 0;
 
@@ -59,7 +185,8 @@ export function HookCard({ index, text, onRemix, isRemixing, remixVariations = [
         </p>
       </div>
 
-      <div className="flex items-center gap-2 px-4 pb-3 pt-0 border-t border-white/5 mt-auto">
+      {/* Actions + reactions row */}
+      <div className="flex flex-wrap items-center gap-2 px-4 pb-3 pt-0 border-t border-white/5 mt-auto">
         <SmallCopyButton text={text} />
         {onRemix && (
           <button
@@ -79,12 +206,15 @@ export function HookCard({ index, text, onRemix, isRemixing, remixVariations = [
         {hasVariations && (
           <button
             onClick={() => setShowVariations((v) => !v)}
-            className="ml-auto flex items-center gap-1 text-xs text-white/30 hover:text-white/60 transition-colors"
+            className="flex items-center gap-1 text-xs text-white/30 hover:text-white/60 transition-colors"
           >
             {showVariations ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
             {remixVariations.length} variations
           </button>
         )}
+
+        {/* Emoji reactions — right-aligned, inline follow-up below */}
+        <HookReactions hookText={text} topic={topic} platform={platform} />
       </div>
 
       <AnimatePresence>

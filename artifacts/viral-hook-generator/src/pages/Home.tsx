@@ -399,6 +399,8 @@ export default function Home() {
                         onRemix={() => handleRemix(hook)}
                         isRemixing={remixingSet.has(hook)}
                         remixVariations={remixMap.get(hook) ?? []}
+                        topic={topic}
+                        platform={platform}
                       />
                     ))}
                   </motion.div>
@@ -542,7 +544,7 @@ export default function Home() {
               className="flex items-center gap-2 px-5 py-3 rounded-full bg-primary/90 text-white text-sm font-semibold shadow-lg shadow-primary/30 active:scale-95 transition-transform"
             >
               <span className="text-base leading-none">🎯</span>
-              Rate these hooks
+              Did any of these feel usable?
             </button>
           </motion.div>
         )}
