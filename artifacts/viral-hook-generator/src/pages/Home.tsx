@@ -152,12 +152,14 @@ export default function Home() {
   const [remixMap, setRemixMap] = useState<Map<string, string[]>>(new Map());
   const [remixingSet, setRemixingSet] = useState<Set<string>>(new Set());
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [ratedCount, setRatedCount] = useState(0);
 
   const [tipIndex, setTipIndex] = useState(0);
   useEffect(() => {
     if (hooks.length > 0) {
       setTipIndex(Math.floor(Math.random() * CREATOR_TIPS.length));
       setFeedbackSubmitted(false);
+      setRatedCount(0);
     }
   }, [hooks]);
 
@@ -382,6 +384,7 @@ export default function Home() {
                         Hooks 🎣
                       </h2>
                       <p className="text-xs text-white/40 mt-0.5">Short, curiosity-driven hooks for your video.</p>
+                      <p className="text-[11px] text-primary/40 mt-1.5">Help improve these hooks — takes 10 seconds</p>
                     </div>
                     <CopyAllButton label="Copy All" text={hooks.join("\n\n")} />
                   </div>
@@ -401,9 +404,26 @@ export default function Home() {
                         remixVariations={remixMap.get(hook) ?? []}
                         topic={topic}
                         platform={platform}
+                        onRated={() => setRatedCount((c) => Math.min(c + 1, hooks.length))}
                       />
                     ))}
                   </motion.div>
+
+                  {/* Progress indicator */}
+                  {hooks.length > 0 && (
+                    <div className="mt-4 flex items-center gap-3">
+                      <div className="flex-1 h-1 rounded-full bg-white/6 overflow-hidden">
+                        <motion.div
+                          className="h-full rounded-full bg-primary/50"
+                          animate={{ width: `${(ratedCount / hooks.length) * 100}%` }}
+                          transition={{ duration: 0.4, ease: "easeOut" }}
+                        />
+                      </div>
+                      <span className="text-[11px] text-white/30 shrink-0 tabular-nums">
+                        {ratedCount} of {hooks.length} rated
+                      </span>
+                    </div>
+                  )}
                 </SectionCard>
               </motion.div>
 
