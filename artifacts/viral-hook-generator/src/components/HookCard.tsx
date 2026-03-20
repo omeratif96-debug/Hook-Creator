@@ -30,13 +30,37 @@ function SmallCopyButton({ text, className }: { text: string; className?: string
 
 type Reaction = "yes" | "a_little" | "no";
 
-const REACTION_META: Record<Reaction, { emoji: string; confirm: string; followUp: string }> = {
-  yes:      { emoji: "👍", confirm: "Nice — this one works 👍",          followUp: "What made this good?" },
-  a_little: { emoji: "😐", confirm: "Good to know 😐",                   followUp: "What felt off?" },
-  no:       { emoji: "👎", confirm: "Helpful — thanks for being honest", followUp: "What felt off?" },
+const REACTION_META: Record<
+  Reaction,
+  { emoji: string; label: string; confirm: string; followUp: string; color: string; glow: string }
+> = {
+  yes: {
+    emoji: "👍",
+    label: "Good",
+    confirm: "Nice — this one works 👍",
+    followUp: "What made this good?",
+    color: "border-emerald-500/40 bg-emerald-500/10 text-emerald-400",
+    glow: "shadow-[0_0_16px_rgba(52,211,153,0.25)]",
+  },
+  a_little: {
+    emoji: "😐",
+    label: "Okay",
+    confirm: "Good to know 😐",
+    followUp: "What felt off?",
+    color: "border-amber-500/40 bg-amber-500/10 text-amber-400",
+    glow: "shadow-[0_0_16px_rgba(251,191,36,0.2)]",
+  },
+  no: {
+    emoji: "👎",
+    label: "Bad",
+    confirm: "Helpful — thanks for being honest",
+    followUp: "What felt off?",
+    color: "border-rose-500/40 bg-rose-500/10 text-rose-400",
+    glow: "shadow-[0_0_16px_rgba(244,63,94,0.2)]",
+  },
 };
 
-const REACTIONS = (["yes", "a_little", "no"] as Reaction[]);
+const REACTIONS = ["yes", "a_little", "no"] as Reaction[];
 
 interface HookReactionsProps {
   hookText: string;
@@ -82,61 +106,89 @@ function HookReactions({ hookText, topic, platform, onRated }: HookReactionsProp
   };
 
   return (
-    <div className="px-4 pb-3 border-t border-white/5">
+    <div className="px-4 pb-3">
       <AnimatePresence mode="wait">
         {done ? (
-          /* ── Done state ── */
+          /* ── Done ── */
           <motion.div
             key="done"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-center justify-center gap-1.5 py-2"
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex items-center justify-center gap-1.5 py-3"
           >
-            <Check size={11} className="text-green-400" />
-            <span className="text-[11px] text-green-400/80">Thanks for rating this</span>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+              className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center"
+            >
+              <Check size={10} className="text-emerald-400" />
+            </motion.div>
+            <span className="text-[11px] text-white/40">Thanks for rating this</span>
           </motion.div>
         ) : !reaction ? (
-          /* ── Initial: centered reaction buttons ── */
+          /* ── Reaction buttons ── */
           <motion.div
             key="buttons"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.97 }}
-            className="flex items-center justify-center gap-3 pt-3"
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15 }}
+            className="flex items-center justify-center gap-3 py-3"
           >
-            {REACTIONS.map((value) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => handleReact(value)}
-                className="group flex flex-col items-center gap-1 transition-all duration-150 active:scale-90"
-              >
-                <span className="w-10 h-10 flex items-center justify-center text-xl rounded-xl bg-white/5 border border-white/8 group-hover:bg-primary/10 group-hover:border-primary/25 group-hover:scale-110 transition-all duration-150">
-                  {REACTION_META[value].emoji}
-                </span>
-              </button>
-            ))}
+            {REACTIONS.map((value) => {
+              const m = REACTION_META[value];
+              return (
+                <motion.button
+                  key={value}
+                  type="button"
+                  onClick={() => handleReact(value)}
+                  whileHover={{ scale: 1.07, y: -1 }}
+                  whileTap={{ scale: 0.88 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 22 }}
+                  className={cn(
+                    "flex flex-col items-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-xl border transition-colors duration-150 cursor-pointer select-none",
+                    "bg-white/[0.04] border-white/10",
+                    "hover:border-white/20 hover:bg-white/[0.07]"
+                  )}
+                >
+                  <span className="text-2xl leading-none">{m.emoji}</span>
+                  <span className="text-[10px] font-semibold text-white/35 tracking-wide uppercase">
+                    {m.label}
+                  </span>
+                </motion.button>
+              );
+            })}
           </motion.div>
         ) : (
-          /* ── After reaction: confirmation + follow-up ── */
+          /* ── Follow-up ── */
           <motion.div
             key="followup"
-            initial={{ opacity: 0, y: 6 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="pt-3 space-y-2.5"
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="py-3 space-y-3"
           >
-            {/* Selected reaction + confirmation */}
-            <div className="flex items-center gap-2">
-              <button
+            {/* Selected reaction pill + confirmation */}
+            <div className="flex items-center gap-2.5">
+              <motion.button
                 type="button"
                 onClick={() => setReaction(null)}
-                className="w-8 h-8 flex items-center justify-center text-lg rounded-lg bg-primary/15 border border-primary/30 scale-105"
+                title="Change reaction"
+                initial={{ scale: 0.6, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 22 }}
+                whileTap={{ scale: 0.9 }}
+                className={cn(
+                  "w-9 h-9 flex items-center justify-center rounded-xl border text-lg shrink-0",
+                  meta!.color,
+                  meta!.glow
+                )}
               >
                 {meta!.emoji}
-              </button>
-              <span className="text-xs text-white/55">{meta!.confirm}</span>
+              </motion.button>
+              <span className="text-[12px] text-white/55 leading-snug">{meta!.confirm}</span>
             </div>
 
             {/* Optional follow-up input */}
@@ -148,13 +200,13 @@ function HookReactions({ hookText, topic, platform, onRated }: HookReactionsProp
                 onKeyDown={(e) => e.key === "Enter" && submit(true)}
                 placeholder={meta!.followUp}
                 autoFocus
-                className="flex-1 min-w-0 px-2.5 py-1.5 text-xs text-white rounded-lg bg-white/5 border border-white/10 focus:border-primary/40 focus:ring-1 focus:ring-primary/10 outline-none transition-all placeholder:text-white/20"
+                className="flex-1 min-w-0 px-3 py-2 text-xs text-white rounded-lg bg-white/5 border border-white/10 focus:border-primary/40 focus:ring-1 focus:ring-primary/10 outline-none transition-all placeholder:text-white/20"
               />
               <button
                 type="button"
                 onClick={() => submit(true)}
                 disabled={submitting}
-                className="shrink-0 px-3 py-1.5 text-xs font-semibold rounded-lg bg-primary/15 border border-primary/25 text-primary/80 hover:bg-primary/25 hover:text-primary transition-all disabled:opacity-40"
+                className="shrink-0 px-3 py-2 text-xs font-semibold rounded-lg bg-primary/15 border border-primary/25 text-primary/80 hover:bg-primary/25 hover:text-primary transition-all disabled:opacity-40"
               >
                 {submitting ? "…" : "Send"}
               </button>
@@ -162,7 +214,7 @@ function HookReactions({ hookText, topic, platform, onRated }: HookReactionsProp
                 type="button"
                 onClick={() => submit(false)}
                 disabled={submitting}
-                className="shrink-0 px-2.5 py-1.5 text-xs text-white/30 hover:text-white/60 transition-colors"
+                className="shrink-0 px-2 py-2 text-xs text-white/30 hover:text-white/60 transition-colors"
               >
                 Skip
               </button>
@@ -208,21 +260,21 @@ export function HookCard({
       variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
       className="group relative flex flex-col rounded-xl border border-white/8 bg-white/[0.03] hover:border-primary/30 hover:bg-primary/[0.04] transition-all duration-200"
     >
-      {/* Hook text */}
-      <div className="flex items-start gap-3 p-4 pb-3">
+      {/* 1 · Hook text */}
+      <div className="flex items-start gap-3 p-4 pb-2">
         <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center">
           {index}
         </span>
-        <p className="flex-1 text-sm text-white/80 leading-relaxed font-medium">
-          {text}
-        </p>
+        <p className="flex-1 text-sm text-white/80 leading-relaxed font-medium">{text}</p>
       </div>
 
-      {/* Emoji reactions — centered, directly under text */}
-      <HookReactions hookText={text} topic={topic} platform={platform} onRated={onRated} />
+      {/* 2 · Reaction buttons / follow-up */}
+      <div className="border-t border-white/5">
+        <HookReactions hookText={text} topic={topic} platform={platform} onRated={onRated} />
+      </div>
 
-      {/* Actions bar */}
-      <div className="flex items-center gap-2 px-4 pb-3 pt-2 border-t border-white/5">
+      {/* 3 · Copy / Remix actions */}
+      <div className="flex items-center gap-2 px-4 pb-3 pt-1 border-t border-white/5">
         <SmallCopyButton text={text} />
         {onRemix && (
           <button
@@ -288,9 +340,7 @@ export function TextCard({ index, text }: { index: number; text: string }) {
         <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-indigo-500/20 text-indigo-400 text-[10px] font-bold flex items-center justify-center">
           {index}
         </span>
-        <p className="flex-1 text-sm text-white/80 leading-relaxed font-medium">
-          {text}
-        </p>
+        <p className="flex-1 text-sm text-white/80 leading-relaxed font-medium">{text}</p>
       </div>
       <div className="px-4 pb-3 border-t border-white/5 mt-auto">
         <SmallCopyButton text={text} className="mt-2" />
@@ -309,9 +359,7 @@ export function IntroCard({ index, text }: { index: number; text: string }) {
         <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-400 text-[10px] font-bold flex items-center justify-center">
           {index}
         </span>
-        <p className="flex-1 text-sm text-white/75 leading-relaxed">
-          {text}
-        </p>
+        <p className="flex-1 text-sm text-white/75 leading-relaxed">{text}</p>
       </div>
       <div className="px-4 pb-3 border-t border-white/5 mt-auto">
         <SmallCopyButton text={text} className="mt-2" />
@@ -319,3 +367,5 @@ export function IntroCard({ index, text }: { index: number; text: string }) {
     </motion.div>
   );
 }
+
+

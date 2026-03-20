@@ -205,6 +205,22 @@ export default function Home() {
     );
   };
 
+  const handleRegenerate = () => {
+    if (!topic.trim() || isPending) return;
+    setRemixMap(new Map());
+    setRemixingSet(new Set());
+    mutate(
+      { data: { topic, platform, contentAngle } },
+      {
+        onSuccess: () => {
+          setTimeout(() => {
+            resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 100);
+        },
+      }
+    );
+  };
+
   const toTitleCase = (s: string) =>
     s.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
 
@@ -424,6 +440,33 @@ export default function Home() {
                       </span>
                     </div>
                   )}
+
+                  {/* Engagement loop — surfaces after 2+ ratings */}
+                  <AnimatePresence>
+                    {ratedCount >= 2 && (
+                      <motion.div
+                        key="engage"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{ duration: 0.3, delay: 0.15 }}
+                        className="mt-3 flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-primary/20 bg-primary/[0.05]"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Sparkles size={13} className="text-primary/50 shrink-0" />
+                          <span className="text-xs text-white/50">Want better hooks like these?</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleRegenerate}
+                          disabled={isPending}
+                          className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/15 border border-primary/30 text-primary hover:bg-primary/25 transition-all disabled:opacity-40 active:scale-95"
+                        >
+                          {isPending ? "Generating…" : "Generate better ones →"}
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </SectionCard>
               </motion.div>
 
