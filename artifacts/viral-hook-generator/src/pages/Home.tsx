@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Clipboard, Loader2, Play, Check } from "lucide-react";
 import { PlatformToggle } from "@/components/PlatformToggle";
 import { HookCard, TextCard, IntroCard } from "@/components/HookCard";
+import { FeedbackBox } from "@/components/FeedbackBox";
 import { useViralHooks } from "@/hooks/use-viral-hooks";
 import { useToast } from "@/hooks/use-toast";
 import type { Platform, ContentAngle } from "@/hooks/use-viral-hooks";
@@ -470,6 +471,9 @@ export default function Home() {
                   </div>
                 </div>
               </motion.div>
+
+              {/* Feedback */}
+              <FeedbackBox key={hooks[0] ?? ""} topic={topic} platform={platform} />
 
             </motion.div>
           )}
