@@ -80,6 +80,21 @@ function HookReactions({ hookText, topic, platform, onRated }: HookReactionsProp
   const handleReact = (value: Reaction) => {
     setReaction(value);
     setComment("");
+
+    // Track click immediately (fire-and-forget)
+    try {
+      fetch("/api/track-click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hookText,
+          buttonClicked: value,
+          timestamp: new Date().toISOString(),
+        }),
+      }).catch(() => {});
+    } catch {
+      // ignore
+    }
   };
 
   const submit = async (withComment: boolean) => {
