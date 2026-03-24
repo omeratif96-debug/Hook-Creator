@@ -19,3 +19,4 @@
 
 export * from "./waitlist";
 export * from "./feedback";
+export * from "./clicks";
